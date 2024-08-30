@@ -48,6 +48,7 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     id_ficha
   ) => {
     // const useUsuario = useUsuarioStore();
+    console.log({ documento, nombre, telefono, email, id_ficha }); // Verificar datos
     try {
       let r = await axios.post(
         `http://localhost:5001/api/Aprendices/crearaprendiz`,
