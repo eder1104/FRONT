@@ -109,9 +109,15 @@ const columns = ref([
 const rows = ref([]);
 
 onBeforeMount(() => {
+  traer()
   cargarAprendices();
   cargarFichas();
 });
+
+async function traer() {
+  const resultado = await useBitacora.listarTodo();
+  rows.value = resultado.data;
+}
 
 async function cargarAprendices() {
   try {
@@ -204,7 +210,7 @@ const validar = async () => {
       type: "negative",
       message: "Error al guardar la ficha.",
     });
-    console.error("Error al guardar la ficha:", error.response ? error.response.data : error.message);
+    console.error("Error al guardar la bitacora:", error.response ? error.response.data : error.message);
   }
 };
 </script>
