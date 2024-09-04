@@ -7,29 +7,37 @@ export const useBitacoraStore = defineStore("bitacora", () => {
   let token = ref("")
   const listarTodo = async () => {
     try {
-      let r = await axios.get("http://localhost:5001/api/Bitacoras/listarTodo")
+      let r = await axios.get("http://localhost:5001/api/Bitacoras/listartodo")
       console.log(r);
       return r
     } catch (error) {
       console.log(error);
-      return error
+    }
+  }
+
+  const listarporfechas = async () => {
+    try {
+      let r = await axios.get(`http://localhost:5001/api/Bitacoras/listarporfechas`)
+      console.log(r);
+      return r
+    } catch (error) {
+      console.log(error);
     }
   }
 
   const listarficha = async () => {
     try {
-      let r = await axios.get(`http://localhost:5001/api/Bitacora/ListarPorFicha/${id_ficha}`)
+      let r = await axios.get(`http://localhost:5001/api/Bitacoras/listarporficha/${id_ficha}`)
       console.log(r);
       return r
     } catch (error) {
       console.log(error);
-      return error
     }
   }
 
   const listarporaprendiz = async () => {
     try {
-      let r = await axios.get(`http://localhost:5001/api/Bitacora/ListarPorAprendiz/${id_aprendiz}`)
+      let r = await axios.get(`http://localhost:5001/api/Bitacoras/listarporaprendiz/${id_aprendiz}`)
       console.log(r);
       return r
     } catch (error) {
@@ -38,9 +46,17 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   }
 
-  const insertar = async () => {
+  const crearBitacora = async (
+    id_aprendiz,
+    fecha
+  ) => {
     try {
-      let r = await axios.post(`http://localhost:5001/api/Bitacora/insertar`)
+      let r = await axios.post(`http://localhost:5001/api/Bitacoras/crearBitacora`,
+        {
+          id_aprendiz,
+          fecha
+        }
+      )
       console.log(r);
       return r
     } catch (error) {
@@ -51,7 +67,7 @@ export const useBitacoraStore = defineStore("bitacora", () => {
 
     const actualizar = async () => {
       try {
-        let r = await axios.put(`http://localhost:5001/api/Bitacora/Actualizar/${id}`)
+        let r = await axios.put(`http://localhost:5001/api/Bitacoras/actualizar/${id}`)
         console.log(r);
         return r
       } catch (error) {
@@ -60,6 +76,6 @@ export const useBitacoraStore = defineStore("bitacora", () => {
       }
     }
     return {
-      insertar, actualizar, listarTodo, listarficha, listarporaprendiz, token
+      crearBitacora, actualizar, listarTodo, listarficha, listarporaprendiz, listarporfechas, token
     }
 })

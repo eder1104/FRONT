@@ -14,21 +14,31 @@
             dense
             v-model="selectedAprendiz"
             :options="aprendices"
-            option-label="cedula"
+            use-input
+            fill-input
+            @filter="filterFn"
+            option-label="documento"
             option-value="_id"
             label="Seleccionar Aprendiz"
             autofocus
           />
+          <q-input v-model="fecha" label="Seleccionar fecha" readonly>
+            <template v-slot:append>
+              <q-icon
+                name="event"
+                class="cursor-pointer"
+                @click="abrirCalendario = true"
+              />
+            </template>
+          </q-input>
 
-          <p>Ficha del aprendiz</p>
-          <q-select
-            dense
-            v-model="selectedFicha"
-            :options="fichas"
-            option-label="nombre"
-            option-value="_id"
-            label="Seleccionar Ficha"
-          />
+          <q-popup-proxy
+            v-model="abrirCalendario"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-date v-model="fecha" mask="YYYY-MM-DD" />
+          </q-popup-proxy>
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
@@ -41,7 +51,7 @@
     <q-table title="Bitacoras" :rows="rows" :columns="columns" row-key="name">
       <template v-slot:body-cell-opciones="props">
         <q-td :props="props">
-          <q-form @submit.prevent="submitForm">
+          <q-form>
             <q-select
               v-model="bitacora.estado"
               :options="estados"
@@ -67,21 +77,29 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { useBitacoraStore } from "../stores/bitacora.js";
 import { useAprendizStore } from "../stores/aprendiz.js";
+import { useFichaStore } from "../stores/Ficha.js";
+
+onBeforeMount(() => {
+  traer();
+  cargarAprendices();
+  cargarFichas();
+});
 
 const prompt = ref(false);
 const selectedAprendiz = ref(null);
+const fecha = ref(null);
+const abrirCalendario = ref(false);
 const selectedFicha = ref(null);
 const aprendices = ref([]);
 const fichas = ref([]);
 const dialogTitle = ref("");
-
 const bitacora = { estado: "Pendiente" };
 const estados = ["Asistió", "No Asistió", "Excusa", "Pendiente"];
-
 const q$ = useQuasar();
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
-
+const useFicha = useFichaStore();
+const rows = ref([]);
 const columns = ref([
   {
     name: "cedulaAprendiz",
@@ -106,25 +124,27 @@ const columns = ref([
   },
 ]);
 
-const rows = ref([]);
-
-onBeforeMount(() => {
-  traer()
-  cargarAprendices();
-  cargarFichas();
-});
+const filterFn = (val, update, abort) => {
+  update(() => {
+    const needle = val.toLowerCase();
+    const filtered = aprendices.value.filter((aprendiz) =>
+      aprendiz.documento.toLowerCase().includes(needle)
+    );
+    aprendices.value = filtered;
+  });
+};
 
 async function traer() {
   const resultado = await useBitacora.listarTodo();
-  rows.value = resultado.data;
+  rows.value = resultado.data.bitacoras;
 }
 
 async function cargarAprendices() {
   try {
-    const response = await axios.get("http://localhost:5001/api/Aprendices/listartodo");
-    aprendices.value = response.data.map(aprendiz => ({
+    const response = await useAprendiz.listarAprendiz();
+    aprendices.value = response.data.map((aprendiz) => ({
       _id: aprendiz._id,
-      cedula: aprendiz.documento,
+      documento: aprendiz.documento,
     }));
   } catch (error) {
     q$.notify({
@@ -137,8 +157,8 @@ async function cargarAprendices() {
 
 async function cargarFichas() {
   try {
-    const response = await axios.get("http://localhost:5001/api/Fichas/listartodo");
-    fichas.value = response.data.map(ficha => ({
+    const response = await useFicha.listarFichas();
+    fichas.value = response.data.map((ficha) => ({
       _id: ficha._id,
       nombre: ficha.nombre,
     }));
@@ -151,21 +171,29 @@ async function cargarFichas() {
   }
 }
 
-const dialogo = (accion, ficha = null) => {
+const dialogo = (accion, bitacora = null) => {
   if (accion === "crear") {
     dialogTitle.value = "Crear Bitácora";
     selectedAprendiz.value = null;
-    selectedFicha.value = null;
-  } else if (accion === "editar" && ficha) {
+    fecha.value = null;
+  } else if (accion === "editar" && bitacora) {
     dialogTitle.value = "Editar Bitácora";
-    selectedAprendiz.value = ficha.aprendizId;
-    selectedFicha.value = ficha.fichaId;
+    selectedAprendiz.value = bitacora.aprendizId || null;
+    fecha.value = fecha.value;
   }
+  console.log(
+    "Selected Aprendiz ID:",
+    selectedAprendiz.value
+      ? selectedAprendiz.value._id
+      : "No se ha seleccionado ningún aprendiz"
+  );
+  console.log("Fecha seleccionada:", fecha.value);
+
   prompt.value = true;
 };
 
 const validar = async () => {
-  if (!selectedAprendiz.value || !selectedFicha.value) {
+  if (!selectedAprendiz.value || !fecha.value) {
     q$.notify({
       type: "negative",
       message: "Rellena todos los campos.",
@@ -174,34 +202,20 @@ const validar = async () => {
   }
 
   try {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
     if (dialogTitle.value === "Editar Bitácora") {
-      await axios.put(
-        `http://localhost:5001/api/Fichas/actualizarficha/${selectedFicha.value}`,
+      await useBitacora.actualizar(),
         {
           aprendizId: selectedAprendiz.value,
-          fichaId: selectedFicha.value,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+          fecha: fecha.value,
+        };
     } else {
-      await axios.post(
-        "http://localhost:5001/api/Fichas/crearficha",
+      await useBitacora.crearBitacora(),
         {
           aprendizId: selectedAprendiz.value,
-          fichaId: selectedFicha.value,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+          fecha: fecha.value,
+        };
     }
     await traer();
     prompt.value = false;
@@ -210,7 +224,10 @@ const validar = async () => {
       type: "negative",
       message: "Error al guardar la ficha.",
     });
-    console.error("Error al guardar la bitacora:", error.response ? error.response.data : error.message);
+    console.error(
+      "Error al guardar la bitacora:",
+      error.response ? error.response.data : error.message
+    );
   }
 };
 </script>
