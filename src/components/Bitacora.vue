@@ -106,7 +106,7 @@ const columns = ref([
     required: true,
     label: "Cedula del Aprendiz",
     align: "center",
-    field: "documento",
+    field: "id_aprendiz",
     sortable: true,
   },
   {
@@ -134,10 +134,33 @@ const filterFn = (val, update, abort) => {
   });
 };
 
+// async function traer() {
+//   const resultado = await useBitacora.listarTodo();
+//   rows.value = resultado.data.bitacoras;
+//   console.log("Datos de las bitácoras:", rows.value);
+// }
+
+
+
+
 async function traer() {
   const resultado = await useBitacora.listarTodo();
-  rows.value = resultado.data.bitacoras;
+  
+  // Si ya has cargado los aprendices y están en `aprendices.value`
+  rows.value = resultado.data.bitacoras.map(bitacora => {
+    const aprendiz = aprendices.value.find(aprendiz => aprendiz._id === bitacora.id_aprendiz);
+    return {
+      ...bitacora,
+      id_aprendiz: aprendiz ? aprendiz.documento : 'Desconocido',  // Reemplaza el id_aprendiz con el documento
+    };
+  });
+
+  console.log("Datos de las bitácoras:", rows.value);
 }
+
+
+
+
 
 async function cargarAprendices() {
   try {
@@ -178,14 +201,16 @@ const dialogo = (accion, bitacora = null) => {
     fecha.value = null;
   } else if (accion === "editar" && bitacora) {
     dialogTitle.value = "Editar Bitácora";
-    selectedAprendiz.value = bitacora.aprendizId || null;
-    fecha.value = fecha.value;
+    // Asegúrate de que `bitacora.aprendizId` sea el valor correcto
+    selectedAprendiz.value = aprendices.value.find(
+      (aprendiz) => aprendiz._id === bitacora.aprendizId
+    ) || null;
+    fecha.value = bitacora.fecha || null;
   }
+
   console.log(
     "Selected Aprendiz ID:",
-    selectedAprendiz.value
-      ? selectedAprendiz.value._id
-      : "No se ha seleccionado ningún aprendiz"
+    selectedAprendiz.value ? selectedAprendiz.value._id : "No se ha seleccionado ningún aprendiz"
   );
   console.log("Fecha seleccionada:", fecha.value);
 

@@ -2,103 +2,120 @@
   <div class="q-pa-md">
     <div class="login">
       <q-form @submit.prevent="onSubmit" @reset="onReset" class="log">
-      <h5 id="tittle"><b>Login</b></h5>
+        <h5 id="tittle"><b>LOGIN</b></h5>
+        <div class="inputs">
+          <q-input
+            filled
+            :type="text"
+            v-model="email"
+            label="Ingrese su correo"
+            lazy-rules
+            :rules="[(val) => !!val || 'El correo es requerido']"
+          >
+          </q-input>
 
-      <!-- <q-select
-        outlined
-        v-model="selectedUser"
-        use-input
-        hide-selected
-        fill-input
-        input-debounce="300"
-        :options="options"
-        option-value="email"
-        option-label="nombre"
-        label="Seleccionar Perfil"
-        @filter="filterFn"
-        @update:model-value="onSelectChange"
-        style="width: 330px; padding-bottom: 32px"
-      >
+          <q-input
+            filled
+            :type="showPassword ? 'text' : 'password'"
+            v-model="contrasena"
+            label="Ingrese su contraseña"
+            lazy-rules
+            :rules="[(val) => !!val || 'La contraseña es requerida']"
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="togglePasswordVisibility"
+              />
+            </template>
+          </q-input>
+        </div>
+        <div class="bottom">
+          <q-btn label="Ingresar" type="submit" class="register" />
+        </div>
 
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              No hay resultados
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-select> -->
-
-      <q-input
-        filled
-        :type="text"
-        v-model="email"
-        label="Ingrese su correo"
-        lazy-rules
-        :rules="[(val) => !!val || 'El correo es requerido']"
-      >
-      </q-input>
-
-      <q-input
-        filled
-        :type="showPassword ? 'text' : 'password'"
-        v-model="contrasena"
-        label="Ingrese su contraseña"
-        lazy-rules
-        :rules="[(val) => !!val || 'La contraseña es requerida']"
-      >
-        <template v-slot:append>
-          <q-icon
-            :name="showPassword ? 'visibility_off' : 'visibility'"
-            class="cursor-pointer"
-            @click="togglePasswordVisibility"
+        <div class="bottom">
+          <q-btn
+            label="Restablecer Contraseña"
+            type="submit"
+            to="/Recuperacion"
           />
-        </template>
-      </q-input>
-
-      <div class="bottom">
-        <q-btn label="Ingresar" type="submit" color="primary" />
-      </div>
-
-      <div class="bottom">
-        <q-btn label="Restablecer Contraseña" type="submit" to="/Recuperacion" color="primary" />
-      </div>
-    </q-form>
+        </div>
+      </q-form>
     </div>
-   
+  </div>
+  <div>
+    <div class="todr">REPFORA - Sena 2024 © Todos los derechos reservados</div>
   </div>
 </template>
 
 <style>
-.q-gutter-md{
+.q-pa-md {
+  display: flex;
+  justify-content: center;
+}
+
+.q-gutter-md {
   display: flex;
   flex-direction: column;
-
+  justify-content: center;
 }
 
-.login{
-  width: 60%;
+.login {
+  width: 40%;
   display: flex;
-  translate: (40%px, );
+  border: black 2px solid;
+  border-radius: 20px;
 }
 
-.log{
+.log {
   width: 100%;
 }
 
-#tittle{
+#tittle {
   width: 100%;
+  height: 10vh;
   display: flex;
   justify-content: center;
   background-color: #2e7d32;
-  margin-left: -20px;
-
+  text-align: center;
+  align-items: center;
+}
+#tittle b {
+  font-size: 30px;
+  font-family: Lucida Sans, Lucida Sans Regular, Lucida Grande,
+    Lucida Sans Unicode, Geneva, Verdana, sans-serif;
+  color: white;
+  font-weight: 700;
 }
 
-.bottom{
+.bottom {
   margin-top: 20px;
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
+
+.todr {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 10vh;
+  align-items: center;
+  background-color: rgb(212, 212, 212);
+}
+
+.register {
+  background-color: #2e7d32;
+}
+
+.q-btn:before {
+  background-color: #2e7d32;
+}
+
 </style>
 
 <script setup>
@@ -146,16 +163,19 @@ const onSelectChange = (user) => {
 
 const onSubmit = async () => {
   try {
-    const res = await axios.post("http://localhost:5001/api/Usuarios/loginusuario", {
-      email: email.value,
-      contrasena: contrasena.value,
-    });
+    const res = await axios.post(
+      "http://localhost:5001/api/Usuarios/loginusuario",
+      {
+        email: email.value,
+        contrasena: contrasena.value,
+      }
+    );
     console.log(email.value);
     console.log(contrasena.value);
 
     const { usuario, token } = res.data;
 
-// Aquí se guarda el token en localStorage, en el estado global, etc.
+    // Aquí se guarda el token en localStorage, en el estado global, etc.
     localStorage.setItem("token", token);
 
     Notify.create({
