@@ -54,14 +54,14 @@
           <router-view></router-view>
         </q-page-container>
 
-        <q-footer id="footer_inf">
+        <!-- <q-footer id="footer_inf">
           <q-toolbar>
             <q-toolbar-title>
               <q-avatar></q-avatar>
               <div class="text">REPFORA - Sena 2024 © todos los derechos reservados</div>
             </q-toolbar-title>
           </q-toolbar>
-        </q-footer>
+        </q-footer> -->
       </div>
     </q-layout>
   </div>
