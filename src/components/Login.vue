@@ -6,7 +6,7 @@
         <div class="inputs">
           <q-input
             filled
-            :type="text"
+            type="text"
             v-model="email"
             label="Ingrese su correo"
             lazy-rules
@@ -170,20 +170,29 @@ const onSubmit = async () => {
         contrasena: contrasena.value,
       }
     );
-    console.log(email.value);
-    console.log(contrasena.value);
 
+    // Asegúrate de que el token está en la respuesta
     const { usuario, token } = res.data;
 
-    // Aquí se guarda el token en localStorage, en el estado global, etc.
+    if (!token) {
+      throw new Error("No se recibió un token en la respuesta");
+    }
+
+    // Guardar el token en localStorage
     localStorage.setItem("token", token);
+
+    console.log("Token guardado:", token);
 
     Notify.create({
       type: "positive",
       message: "Inicio de sesión exitoso",
     });
+
+    // Redirigir al Home
     router.push("/Home");
   } catch (error) {
+    console.log("Error en login:", error);
+
     Notify.create({
       type: "negative",
       message: error.response?.data?.msg || "Error en el inicio de sesión",

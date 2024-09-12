@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-layout view="lHh Lpr lff" class="shadow-2 rounded-borders">
+    <q-layout view="lHh Lpr lff">
       <q-header elevated class="bg-green text-white">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
@@ -68,23 +68,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const drawer = ref(false);
-const isLoading = ref(true);
+const isLoading = ref(null);
 
 function goToRoute(route) {
   router.push(route);
 }
-
-// Simulación de carga de datos
-onMounted(() => {
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 2000);
-});
 </script>
 
 <style>
@@ -135,5 +128,17 @@ onMounted(() => {
   justify-content: center;
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 9999;
+}
+
+.q-table__title{
+font-size: 40px;
+}
+
+.activar{
+background-color: rgb(39, 210, 39) !important;
+}
+
+.desactivar{
+background-color: red !important;
 }
 </style>

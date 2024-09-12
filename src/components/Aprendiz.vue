@@ -5,8 +5,8 @@
       <template v-slot:body-cell-opciones="props">
         <q-td :props="props">
           <q-btn color="primary" @click="abrirDialogo(props.row)">📝</q-btn>
-          <q-btn @click="activar(props.row._id)" v-if="props.row.estado == 0">✅</q-btn>
-          <q-btn @click="desactivar(props.row._id)" v-else>❌</q-btn>
+          <q-btn @click="activar(props.row._id)" class="activar" v-if="props.row.estado == 0">✅</q-btn>
+          <q-btn @click="desactivar(props.row._id)" class="desactivar" v-else>❌</q-btn>
         </q-td>
       </template>
       <template v-slot:body-cell-estado1="props">
@@ -43,7 +43,7 @@
           />
         </q-card-section>
 
-        <q-card-actions align="right" class="text-primary">
+        <q-card-actions align="right" class="text-primary1">
           <q-btn flat label="Cerrar" v-close-popup />
           <q-btn flat label="Guardar" @click="guardar()" />
         </q-card-actions>
@@ -51,6 +51,9 @@
     </q-dialog>
   </div>
 </template>
+
+<style>
+</style>
 
 <script setup>
 import { ref } from 'vue';
@@ -115,7 +118,7 @@ const columns = ref([
 ]);
 
 const useAprendiz = useAprendizStore();
-const useFicha = useFichaStore()
+const useFicha = useFichaStore();
 const $q = useQuasar();
 
 onBeforeMount(() => {
@@ -137,14 +140,14 @@ function abrirDialogo(row = null) {
     inputTelefonoAprendiz.value = row.telefono;
     inputEmailAprendiz.value = row.email;
     selectedFicha.value = row.id_ficha || null;
-    } else {
+  } else {
     editando.value = false;
     aprendizId.value = null;
     inputNombreAprendiz.value = '';
     inputDocumentoAprendiz.value = '';
     inputTelefonoAprendiz.value = '';
     inputEmailAprendiz.value = '';
-    selectedFicha.value = null
+    selectedFicha.value = null;
   }
   prompt.value = true;
 }
@@ -157,16 +160,15 @@ async function traerFichas() {
       codigo: ficha.codigo,
     }));
   } catch (error) {
-    q$.notify({
-      type: "negative",
-      message: "Error al cargar las fichas.",
+    $q.notify({
+      type: 'negative',
+      message: 'Error al cargar las fichas.',
     });
-    console.error("Error al cargar las fichas:", error);
+    console.error('Error al cargar las fichas:', error);
   }
 }
 
 async function guardar() {
-
   const fichaId = selectedFicha.value.id || selectedFicha.value;
 
   if (!inputNombreAprendiz.value || !inputDocumentoAprendiz.value || !inputTelefonoAprendiz.value || !inputEmailAprendiz.value) {
@@ -177,35 +179,89 @@ async function guardar() {
     return;
   }
 
-  if (editando.value) {
-    await useAprendiz.actualizaraprendiz(
-      aprendizId.value,
-      inputNombreAprendiz.value.trim(),
-      inputDocumentoAprendiz.value.trim(),
-      inputTelefonoAprendiz.value.trim(),
-      inputEmailAprendiz.value.trim(),
-      fichaId
-        );
-  } else {
-    await useAprendiz.crearaprendiz(
-      inputDocumentoAprendiz.value.trim(),
-      inputNombreAprendiz.value.trim(),
-      inputTelefonoAprendiz.value.trim(),
-      inputEmailAprendiz.value.trim(),
-      fichaId
-        );
+  try {
+    if (editando.value) {
+      const respuesta = await useAprendiz.actualizaraprendiz(
+        aprendizId.value,
+        inputNombreAprendiz.value.trim(),
+        inputDocumentoAprendiz.value.trim(),
+        inputTelefonoAprendiz.value.trim(),
+        inputEmailAprendiz.value.trim(),
+        fichaId
+      );
+      if (respuesta.success) {
+        $q.notify({
+          type: 'positive',
+          message: 'Aprendiz actualizado correctamente.',
+        });
+      } else {
+        $q.notify({
+          type: 'negative',
+          message: 'Error al actualizar el aprendiz.',
+        });
+      }
+    } else {
+      const respuesta = await useAprendiz.crearaprendiz(
+        inputDocumentoAprendiz.value.trim(),
+        inputNombreAprendiz.value.trim(),
+        inputTelefonoAprendiz.value.trim(),
+        inputEmailAprendiz.value.trim(),
+        fichaId
+      );
+      if (respuesta.success) {
+        $q.notify({
+          type: 'positive',
+          message: 'Aprendiz creado correctamente.',
+        });
+      } else {
+        $q.notify({
+          type: 'negative',
+          message: 'Error al crear el aprendiz.',
+        });
+      }
+    }
+    traer();
+    prompt.value = false;
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Error al procesar la solicitud.',
+    });
+    console.error('Error en guardar:', error);
   }
-  traer();
-  prompt.value = false;
 }
 
 async function activar(id) {
-  await useAprendiz.activaraprendiz(id);
-  traer();
+  try {
+    await useAprendiz.activaraprendiz(id);
+    traer();
+    $q.notify({
+      type: 'positive',
+      message: 'Aprendiz activado correctamente.',
+    });
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Error al activar el aprendiz.',
+    });
+    console.error('Error al activar el aprendiz:', error);
+  }
 }
 
 async function desactivar(id) {
-  await useAprendiz.desactivaraprendiz(id);
-  traer();
+  try {
+    await useAprendiz.desactivaraprendiz(id);
+    traer();
+    $q.notify({
+      type: 'positive',
+      message: 'Aprendiz desactivado correctamente.',
+    });
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Error al desactivar el aprendiz.',
+    });
+    console.error('Error al desactivar el aprendiz:', error);
+  }
 }
 </script>

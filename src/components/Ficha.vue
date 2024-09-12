@@ -32,10 +32,10 @@
     <template v-slot:body-cell-opciones="props">
       <q-td :props="props">
         <q-btn color="primary" @click="dialogo('editar', props.row)">📝</q-btn>
-        <q-btn @click="activar(props.row._id)" v-if="props.row.estado == 0"
+        <q-btn @click="activar(props.row._id)" class="activar" v-if="props.row.estado == 0"
           >✅</q-btn
         >
-        <q-btn @click="desactivar(props.row._id)" v-else>❌</q-btn>
+        <q-btn @click="desactivar(props.row._id)" class="desactivar" v-else>❌</q-btn>
       </q-td>
     </template>
     <template v-slot:body-cell-estado1="props">

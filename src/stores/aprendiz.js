@@ -66,7 +66,7 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     }
   };
 
-  const actualizaraprendiz = async () => {
+  const actualizaraprendiz = async (id) => {
     try {
       let r = await axios.put(
         `http://localhost:5001/api/Aprendices/actualizaraprendiz/${id}`
@@ -113,6 +113,6 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     listarAprendizPorID,
     listarid,
     crearaprendiz,
-    token,
+    token
   };
 });

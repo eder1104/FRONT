@@ -88,7 +88,7 @@ function goToRoute(route) {
 }
 
 .menuButton {
-  background-color: #2e7d32 !important;
+  background-color: red !important;
   color: white !important;
   font-size: 17px !important;
   width: 90% !important;
