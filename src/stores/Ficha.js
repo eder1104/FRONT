@@ -12,7 +12,7 @@ export const useFichaStore = defineStore("ficha", () => {
 
   // Crear instancia de axios con la base URL
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5001/api',
+    baseURL: 'https://api-asistencia-sena.onrender.com/api',
   });
 
   // Interceptor para agregar el token en cada solicitud
@@ -96,6 +96,8 @@ export const useFichaStore = defineStore("ficha", () => {
   const actualizar = async (id, fichaData) => {
     try {
       loading.value = true;
+      console.log('Token guardado:   ',token);
+      
       let response = await axiosInstance.put(`/Fichas/actualizarficha/${id}`, fichaData);
       console.log(response);
       q.notify({

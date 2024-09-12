@@ -206,7 +206,6 @@ const validar = async () => {
   }
 };
 
-// Cambiar estado del usuario (activar/desactivar)
 async function activar(id) {
   await useUsuario.activar(id);
   traer();
@@ -217,14 +216,13 @@ async function desactivar(id) {
   traer();
 }
 
-// Abrir el diálogo de crear/editar
 const dialogo = (accion, administrador = null) => {
   if (accion === "crear") {
     dialogTitle.value = "Crear Administrador";
     inputNombreAdministrador.value = "";
     inputEmailAdministrador.value = "";
     inputContrasenaAdministrador.value = "";
-    usuarioId.value = null; // Limpiar el id del usuario
+    usuarioId.value = null;
     editando.value = false;
   } else if (accion === "editar" && administrador) {
     dialogTitle.value = "Editar Administrador";
@@ -233,10 +231,9 @@ const dialogo = (accion, administrador = null) => {
     usuarioId.value = administrador._id; // Asignar el id del usuario a editar
     editando.value = true;
   }
-  prompt.value = true; // Abrir el diálogo
+  prompt.value = true;
 };
 
-// Columnas de la tabla
 const columns = ref([
   {
     name: "nombre1",

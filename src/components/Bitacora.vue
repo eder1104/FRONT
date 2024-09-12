@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Spinner visible cuando loading es true -->
     <div v-if="loading" class="spinner-container" :style="{ zIndex: 2 }">
       <q-spinner color="primary" size="3em" :thickness="2" />
     </div>
@@ -72,53 +71,6 @@
     </q-table>
   </div>
 </template>
-
-<style>
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  position: fixed;
-  width: 100vw;
-  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
-  z-index: 2; /* Por encima de todo */
-}
-
-.crear{
-  margin-bottom: 20px;
-  margin-left: 20px;
-}
-
-.q-table__container div{
-  display: flex;
-  justify-content: center;
-}
-
-.q-table__container > div:first-child{
-  border-bottom: rgb(0, 136, 11) 4px solid;
-  padding: 2%;
-}
-
-.q-table--horizontal-separator thead th, .q-table--horizontal-separator tbody tr:not(:last-child) > td, .q-table--cell-separator thead th, .q-table--cell-separator tbody tr:not(:last-child) > td{
-  border-bottom-width: 3px !important;
-}
-
-.q-table__top{
-padding: 3px !important;
-}
-th.text-center{
-  font-size: 15px !important;
-  font-weight: bold !important;
-  color: rgb(1, 87, 0);
-}
-
-td{
-  padding: 2% !important;
-}
-
-</style>
-
 
 <script setup>
 import { ref, onBeforeMount } from "vue";
@@ -309,3 +261,48 @@ const validar = async () => {
 };
 </script>
 
+<style>
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: fixed;
+  width: 100vw;
+  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
+  z-index: 2; /* Por encima de todo */
+}
+
+.crear{
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.q-table__container div{
+  display: flex;
+  justify-content: center;
+}
+
+.q-table__container > div:first-child{
+  border-bottom: rgb(0, 136, 11) 4px solid;
+  padding: 2%;
+}
+
+.q-table--horizontal-separator thead th, .q-table--horizontal-separator tbody tr:not(:last-child) > td, .q-table--cell-separator thead th, .q-table--cell-separator tbody tr:not(:last-child) > td{
+  border-bottom-width: 3px !important;
+}
+
+.q-table__top{
+padding: 3px !important;
+}
+th.text-center{
+  font-size: 15px !important;
+  font-weight: bold !important;
+  color: rgb(1, 87, 0);
+}
+
+td{
+  padding: 2% !important;
+}
+
+</style>

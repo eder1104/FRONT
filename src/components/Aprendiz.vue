@@ -181,7 +181,7 @@ async function guardar() {
 
   try {
     if (editando.value) {
-      const respuesta = await useAprendiz.actualizaraprendiz(
+      const respuesta = await useAprendiz.actualizarAprendiz(
         aprendizId.value,
         inputNombreAprendiz.value.trim(),
         inputDocumentoAprendiz.value.trim(),
@@ -201,7 +201,7 @@ async function guardar() {
         });
       }
     } else {
-      const respuesta = await useAprendiz.crearaprendiz(
+      const respuesta = await useAprendiz.crearAprendiz(
         inputDocumentoAprendiz.value.trim(),
         inputNombreAprendiz.value.trim(),
         inputTelefonoAprendiz.value.trim(),
@@ -233,7 +233,7 @@ async function guardar() {
 
 async function activar(id) {
   try {
-    await useAprendiz.activaraprendiz(id);
+    await useAprendiz.activarAprendiz(id);
     traer();
     $q.notify({
       type: 'positive',
@@ -250,7 +250,7 @@ async function activar(id) {
 
 async function desactivar(id) {
   try {
-    await useAprendiz.desactivaraprendiz(id);
+    await useAprendiz.desactivarAprendiz(id);
     traer();
     $q.notify({
       type: 'positive',

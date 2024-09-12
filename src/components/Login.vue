@@ -56,28 +56,12 @@
   justify-content: center;
 }
 
-.q-gutter-md {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .login {
-  width: 40%;
-  display: flex;
-  border: black 2px solid;
-  border-radius: 20px;
-}
-
-.log {
-  width: 100%;
+  border: rgb(230, 203, 203) 1px solid;
 }
 
 #tittle {
   width: 100%;
-  height: 10vh;
-  display: flex;
-  justify-content: center;
   background-color: #2e7d32;
   text-align: center;
   align-items: center;
@@ -87,7 +71,6 @@
   font-family: Lucida Sans, Lucida Sans Regular, Lucida Grande,
     Lucida Sans Unicode, Geneva, Verdana, sans-serif;
   color: white;
-  font-weight: 700;
 }
 
 .bottom {
@@ -95,6 +78,7 @@
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
+  color: white;
 }
 
 .todr {
@@ -115,7 +99,6 @@
 .q-btn:before {
   background-color: #2e7d32;
 }
-
 </style>
 
 <script setup>
@@ -131,15 +114,6 @@ const selectedUser = ref(null);
 const options = ref([]);
 const rows = ref([]);
 const router = useRouter();
-
-const filterFn = (val, update) => {
-  update(() => {
-    const needle = val.toLowerCase();
-    options.value = rows.value.filter((usuario) =>
-      usuario.nombre.toLowerCase().includes(needle)
-    );
-  });
-};
 
 onBeforeMount(() => {
   traer();
