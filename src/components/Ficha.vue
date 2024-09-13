@@ -1,84 +1,113 @@
 <template>
-  <q-select
-    outlined
-    v-model="fichaId"
-    use-input
-    hide-selected
-    fill-input
-    input-debounce="0"
-    :options="options"
-    option-value="_id"
-    option-label="nombre"
-    label="Buscar Ficha"
-    @filter="filterFn"
-    style="width: 250px; padding-bottom: 32px"
-  >
-    <template v-slot:no-option>
-      <q-item>
-        <q-item-section class="text-grey"> No hay resultados </q-item-section>
-      </q-item>
-    </template>
-  </q-select>
+  <div class="q-pa-md">
+    <q-layout view="lHh Lpr lff">
 
-  <q-btn color="secondary" @click="dialogo('crear')" label="Crear Ficha" />
 
-  <q-table
-    class="posicion"
-    title="Fichas"
-    :rows="rows"
-    :columns="columns"
-    row-key="name"
-  >
-    <template v-slot:body-cell-opciones="props">
-      <q-td :props="props">
-        <q-btn color="primary" @click="dialogo('editar', props.row)">📝</q-btn>
-        <q-btn @click="activar(props.row._id)" class="activar" v-if="props.row.estado == 0"
-          >✅</q-btn
+      <div v-if="isLoading" class="fullscreen-spinner">
+        <q-spinner color="primary" size="3em" :thickness="2" />
+      </div>
+
+      <div v-else>
+
+        <q-select
+          outlined
+          v-model="fichaId"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="0"
+          :options="options"
+          option-value="_id"
+          option-label="nombre"
+          label="Buscar Ficha"
+          @filter="filterFn"
+          style="width: 250px; padding-bottom: 32px"
         >
-        <q-btn @click="desactivar(props.row._id)" class="desactivar" v-else>❌</q-btn>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-estado1="props">
-      <q-td :props="props">
-        <p style="color: green" v-if="props.row.estado == 1">Activo</p>
-        <p style="color: red" v-else>Inactivo</p>
-      </q-td>
-    </template>
-  </q-table>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No hay resultados
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
 
-  <q-dialog v-model="prompt" persistent>
-    <q-card style="min-width: 350px">
-      <q-card-section>
-        <div class="text-h6">{{ dialogTitle }}</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        <p>Codigo de ficha</p>
-        <q-input
-          dense
-          v-model="inputCodigoFicha"
-          autofocus
-          @keydown="preventNonNumeric"
-          @input="formatInputCodigoFicha"
-          @keyup.enter="prompt = false"
+        <q-btn
+          color="secondary"
+          @click="dialogo('crear')"
+          label="Crear Ficha"
         />
 
-        <p>Nombre de Ficha</p>
-        <q-input
-          dense
-          v-model="inputNombreFicha"
-          autofocus
-          @keyup.enter="prompt = false"
-        />
-      </q-card-section>
+        <q-table
+          class="posicion"
+          title="Fichas"
+          :rows="rows"
+          :columns="columns"
+          row-key="name"
+        >
+          <template v-slot:body-cell-opciones="props">
+            <q-td :props="props">
+              <q-btn color="primary" @click="dialogo('editar', props.row)"
+                >📝</q-btn
+              >
+              <q-btn
+                @click="activar(props.row._id)"
+                class="activar"
+                v-if="props.row.estado == 0"
+                >✅</q-btn
+              >
+              <q-btn
+                @click="desactivar(props.row._id)"
+                class="desactivar"
+                v-else
+                >❌</q-btn
+              >
+            </q-td>
+          </template>
+          <template v-slot:body-cell-estado1="props">
+            <q-td :props="props">
+              <p style="color: green" v-if="props.row.estado == 1">Activo</p>
+              <p style="color: red" v-else>Inactivo</p>
+            </q-td>
+          </template>
+        </q-table>
 
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Cerrar" v-close-popup @click="validar()" />
+        <q-dialog v-model="prompt" persistent>
+          <q-card style="min-width: 350px">
+            <q-card-section>
+              <div class="text-h6">{{ dialogTitle }}</div>
+            </q-card-section>
 
-        <q-btn flat label="Guardar Ficha" @click="validar()" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+            <q-card-section class="q-pt-none">
+              <p>Codigo de ficha</p>
+              <q-input
+                dense
+                v-model="inputCodigoFicha"
+                autofocus
+                @keydown="preventNonNumeric"
+                @input="formatInputCodigoFicha"
+                @keyup.enter="prompt = false"
+              />
+
+              <p>Nombre de Ficha</p>
+              <q-input
+                dense
+                v-model="inputNombreFicha"
+                autofocus
+                @keyup.enter="prompt = false"
+              />
+            </q-card-section>
+
+            <q-card-actions align="right" class="text-primary">
+              <q-btn flat label="Cerrar" v-close-popup @click="validar()" />
+
+              <q-btn flat label="Guardar Ficha" @click="validar()" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+      </div>
+    </q-layout>
+  </div>
 </template>
 
 <script setup>
@@ -94,6 +123,8 @@ const inputCodigoFicha = ref("");
 const inputNombreFicha = ref("");
 const rows = ref([]);
 const loading = ref(false);
+const drawer = ref(false);
+const isLoading = ref(false);
 
 let dialogTitle = ref("");
 let editando = ref(false);
@@ -284,16 +315,20 @@ const columns = ref([
 
 const preventNonNumeric = (event) => {
   // Permitir solo números y teclas de control (backspace, delete, arrows)
-  if (!/[\d]/.test(event.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab'].includes(event.key)) {
+  if (
+    !/[\d]/.test(event.key) &&
+    !["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"].includes(
+      event.key
+    )
+  ) {
     event.preventDefault();
   }
 };
 
 const formatInputCodigoFicha = (event) => {
   // Eliminar caracteres no numéricos del campo de entrada
-  inputCodigoFicha.value = event.target.value.replace(/[^0-9]/g, '');
+  inputCodigoFicha.value = event.target.value.replace(/[^0-9]/g, "");
 };
-
 </script>
 
 <style></style>

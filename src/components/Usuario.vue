@@ -1,92 +1,115 @@
 <template>
-  <div>
-    <!-- Buscador de administradores -->
-    <q-select
-      v-model="selectedAdmin"
-      :options="filteredAdmins"
-      option-value="_id"
-      option-label="nombre"
-      emit-value
-      map-options
-      use-input
-      fill-input
-      label="Buscar Administrador"
-      filled
-      @filter="filterAdmins"
-      @input="handleInput"
-      @blur="resetSelectInput"
-    />
-    <br />
-    <q-btn color="secondary" @click="dialogo('crear')" label="Crear Usuario" />
-    <br /><br />
+  <div class="q-pa-md">
+    <q-layout view="lHh Lpr lff">
 
-    <!-- Tabla de administradores -->
-    <q-table
-      title="Administradores"
-      :rows="rows"
-      :columns="columns"
-      row-key="_id"
-      ref="adminTable"
-      pagination.sync="pagination"
-      :rows-per-page-options="[20, 50, 100, 0]"
-    >
-      <!-- Opciones de la fila (editar y activar/desactivar) -->
-      <template v-slot:body-cell-opciones="props">
-        <q-td :props="props">
-          <q-btn color="primary" @click="dialogo('editar', props.row)">
-            <font-awesome-icon icon="pen-to-square" />
-          </q-btn>
-          <q-btn @click="activar(props.row._id)" class="activar" v-if="props.row.estado === 0"
-            >✅</q-btn
-          >
-          <q-btn @click="desactivar(props.row._id)" class="desactivar" v-else>
-            <font-awesome-icon icon="ban" />
-          </q-btn>
-        </q-td>
-      </template>
+      <div v-if="isLoading" class="fullscreen-spinner">
+        <q-spinner color="primary" size="3em" :thickness="2" />
+      </div>
 
-      <!-- Estado del usuario en la tabla -->
-      <template v-slot:body-cell-estado1="props">
-        <q-td :props="props">
-          <p :style="{ color: props.row.estado === 1 ? 'green' : 'red' }">
-            {{ props.row.estado === 1 ? "Activo" : "Inactivo" }}
-          </p>
-        </q-td>
-      </template>
-    </q-table>
+      <div v-else>
 
-    <!-- Diálogo para crear/editar administrador -->
-    <q-dialog v-model="prompt" persistent>
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">{{ dialogTitle }}</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <!-- Campos del formulario -->
-          <p>Nombre del Usuario</p>
-          <q-input dense v-model="inputNombreAdministrador" autofocus />
-
-          <p>Email</p>
-          <q-input dense v-model="inputEmailAdministrador" />
-
-          <!-- Contraseña solo visible al crear un usuario -->
-          <p v-show="!editando">Contraseña</p>
-          <q-input
-            dense
-            v-model="inputContrasenaAdministrador"
-            v-show="!editando"
-            type="password"
+        <div>
+          <!-- Buscador de administradores -->
+          <q-select
+            v-model="selectedAdmin"
+            :options="filteredAdmins"
+            option-value="_id"
+            option-label="nombre"
+            emit-value
+            map-options
+            use-input
+            fill-input
+            label="Buscar Administrador"
+            filled
+            @filter="filterAdmins"
+            @input="handleInput"
+            @blur="resetSelectInput"
           />
-        </q-card-section>
+          <br />
+          <q-btn
+            color="secondary"
+            @click="dialogo('crear')"
+            label="Crear Usuario"
+          />
+          <br /><br />
 
-        <!-- Botones de acción en el diálogo -->
-        <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cerrar" @click="prompt = false" />
-          <q-btn flat label="Guardar Administrador" @click="validar()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+          <!-- Tabla de administradores -->
+          <q-table
+            title="Administradores"
+            :rows="rows"
+            :columns="columns"
+            row-key="_id"
+            ref="adminTable"
+            pagination.sync="pagination"
+            :rows-per-page-options="[20, 50, 100, 0]"
+          >
+            <!-- Opciones de la fila (editar y activar/desactivar) -->
+            <template v-slot:body-cell-opciones="props">
+              <q-td :props="props">
+                <q-btn color="primary" @click="dialogo('editar', props.row)">
+                  <font-awesome-icon icon="pen-to-square" />
+                </q-btn>
+                <q-btn
+                  @click="activar(props.row._id)"
+                  class="activar"
+                  v-if="props.row.estado === 0"
+                  >✅</q-btn
+                >
+                <q-btn
+                  @click="desactivar(props.row._id)"
+                  class="desactivar"
+                  v-else
+                >
+                  <font-awesome-icon icon="ban" />
+                </q-btn>
+              </q-td>
+            </template>
+
+            <!-- Estado del usuario en la tabla -->
+            <template v-slot:body-cell-estado1="props">
+              <q-td :props="props">
+                <p :style="{ color: props.row.estado === 1 ? 'green' : 'red' }">
+                  {{ props.row.estado === 1 ? "Activo" : "Inactivo" }}
+                </p>
+              </q-td>
+            </template>
+          </q-table>
+
+          <!-- Diálogo para crear/editar administrador -->
+          <q-dialog v-model="prompt" persistent>
+            <q-card style="min-width: 350px">
+              <q-card-section>
+                <div class="text-h6">{{ dialogTitle }}</div>
+              </q-card-section>
+
+              <q-card-section class="q-pt-none">
+                <!-- Campos del formulario -->
+                <p>Nombre del Usuario</p>
+                <q-input dense v-model="inputNombreAdministrador" autofocus />
+
+                <p>Email</p>
+                <q-input dense v-model="inputEmailAdministrador" />
+
+                <!-- Contraseña solo visible al crear un usuario -->
+                <p v-show="!editando">Contraseña</p>
+                <q-input
+                  dense
+                  v-model="inputContrasenaAdministrador"
+                  v-show="!editando"
+                  type="password"
+                />
+              </q-card-section>
+
+              <!-- Botones de acción en el diálogo -->
+              <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Cerrar" @click="prompt = false" />
+                <q-btn flat label="Guardar Administrador" @click="validar()" />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </div>
+      </div>
+    </q-layout>
   </div>
 </template>
 
@@ -107,6 +130,8 @@ const inputContrasenaAdministrador = ref("");
 const selectedAdmin = ref(null); // Valor del administrador seleccionado
 const filteredAdmins = ref([]); // Opciones filtradas
 const useUsuario = useUsuarioStore();
+const drawer = ref(false);
+const isLoading = ref(false);
 
 // Traer los datos de los administradores
 onBeforeMount(() => {
@@ -262,7 +287,7 @@ const columns = ref([
 </script>
 
 <style>
-.desactivar{
-background-color: red !important;
+.desactivar {
+  background-color: red !important;
 }
 </style>

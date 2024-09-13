@@ -5,22 +5,24 @@ import Bitacora from "../components/Bitacora.vue"
 import Ficha from "../components/Ficha.vue"
 import Aprendiz from "../components/Aprendiz.vue"
 import Recuperacion from "../components/Recuperacion.vue"
-import ElegirRol from "../components/ElegirRol.vue"
-import RegistroAprendiz from "../components/RegistroAprendiz.vue"
+import ListaAprendiz from "../components/ListaAprendiz.vue"
+import Asistencia from "../components/Asistencia.vue"
 
 import {createRouter, createWebHashHistory} from "vue-router"
 
 
 const routes = [
-    {path: "/", component: ElegirRol},
-    {path: "/Login", component: Login},
-    {path: "/Home", component: Home},
-    {path: "/Usuario", component: Usuario},
-    {path: "/Bitacora", component: Bitacora},
-    {path: "/Ficha", component: Ficha},
-    {path: "/Aprendiz", component: Aprendiz},
-    {path: "/Recuperacion", component: Recuperacion},
-    {path: "/LogAprendiz", component: RegistroAprendiz}
+  {path: "/", component: Login},
+{
+  path: "/Home", component: Home, children:[
+    {path: "Usuario", component: Usuario},
+    {path: "Bitacora", component: Bitacora},
+    {path: "Ficha", component: Ficha},
+    {path: "Aprendiz", component: Aprendiz},
+    {path: "Recuperacion", component: Recuperacion},
+    {path: "Listado", component: ListaAprendiz},
+    {path: "Asistencia", component: Asistencia}]
+}
 
 ]
 

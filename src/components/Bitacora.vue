@@ -1,74 +1,104 @@
 <template>
-  <div>
-    <div v-if="loading" class="spinner-container" :style="{ zIndex: 2 }">
-      <q-spinner color="primary" size="3em" :thickness="2" />
-    </div>
-
-    <q-btn
-      color="secondary"
-      :disable="loading"
-      @click="dialogo('crear')"
-      label="Crear Bitacora"
-      class="crear"
-    />
-
-    <q-dialog v-model="prompt" persistent :style="{ zIndex: 1 }">
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">{{ dialogTitle }}</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <p>ID de aprendiz</p>
-          <q-select
-            dense
-            v-model="selectedAprendiz"
-            :options="aprendices"
-            use-input
-            fill-input
-            @filter="filterFn"
-            option-label="documento"
-            option-value="_id"
-            label="Seleccionar Aprendiz"
-            autofocus
-            :disable="loading"
-          />
-          <q-input label="nombre del aprendiz" type="text" :disable="loading">
-          </q-input>
-          <q-input v-model="fecha" label="Seleccionar fecha" type="date" :disable="loading">
-          </q-input>
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary1">
-          <q-btn flat label="Cerrar" v-close-popup :disable="loading" />
-          <q-btn flat label="Guardar Ficha" @click="validar()" :disable="loading" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-table title="BITÁCORAS" :rows="rows" :columns="columns" row-key="name">
-      <div><hr style="border: 1px solid black; width: 50%; margin: auto;">
+  <div class="q-pa-md">
+    <q-layout view="lHh Lpr lff">
+    
+      <div v-if="isLoading" class="fullscreen-spinner">
+        <q-spinner color="primary" size="3em" :thickness="2" />
       </div>
-      <template v-slot:body-cell-opciones="props">
-        <q-td :props="props">
-          <q-form>
-            <q-select
-              v-model="bitacora.estado"
-              :options="estados"
-              label="Estado"
-              filled
-              :disable="loading"
-            />
-          </q-form>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-estado1="props">
-        <q-td :props="props">
-          <p style="color: green" v-if="props.row.estado == 1">Activo</p>
-          <p style="color: red" v-else>Inactivo</p>
-        </q-td>
-      </template>
-    </q-table>
+
+      <div v-else>
+
+        <div v-if="loading" class="spinner-container" :style="{ zIndex: 2 }">
+          <q-spinner color="primary" size="3em" :thickness="2" />
+        </div>
+
+        <q-btn
+          color="secondary"
+          :disable="loading"
+          @click="dialogo('crear')"
+          label="Crear Bitacora"
+          class="crear"
+        />
+
+        <q-dialog v-model="prompt" persistent :style="{ zIndex: 1 }">
+          <q-card style="min-width: 350px">
+            <q-card-section>
+              <div class="text-h6">{{ dialogTitle }}</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              <p>ID de aprendiz</p>
+              <q-select
+                dense
+                v-model="selectedAprendiz"
+                :options="aprendices"
+                use-input
+                fill-input
+                @filter="filterFn"
+                option-label="documento"
+                option-value="_id"
+                label="Seleccionar Aprendiz"
+                autofocus
+                :disable="loading"
+              />
+              <q-input
+                label="nombre del aprendiz"
+                type="text"
+                :disable="loading"
+              >
+              </q-input>
+              <q-input
+                v-model="fecha"
+                label="Seleccionar fecha"
+                type="date"
+                :disable="loading"
+              >
+              </q-input>
+            </q-card-section>
+
+            <q-card-actions align="right" class="text-primary1">
+              <q-btn flat label="Cerrar" v-close-popup :disable="loading" />
+              <q-btn
+                flat
+                label="Guardar Ficha"
+                @click="validar()"
+                :disable="loading"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
+        <q-table
+          title="BITÁCORAS"
+          :rows="rows"
+          :columns="columns"
+          row-key="name"
+        >
+          <div>
+            <hr style="border: 1px solid black; width: 50%; margin: auto" />
+          </div>
+          <template v-slot:body-cell-opciones="props">
+            <q-td :props="props">
+              <q-form>
+                <q-select
+                  v-model="bitacora.estado"
+                  :options="estados"
+                  label="Estado"
+                  filled
+                  :disable="loading"
+                />
+              </q-form>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-estado1="props">
+            <q-td :props="props">
+              <p style="color: green" v-if="props.row.estado == 1">Activo</p>
+              <p style="color: red" v-else>Inactivo</p>
+            </q-td>
+          </template>
+        </q-table>
+      </div>
+    </q-layout>
   </div>
 </template>
 
@@ -111,6 +141,14 @@ const columns = ref([
     sortable: true,
   },
   {
+    name: "nombre",
+    required: true,
+    label: "nombre",
+    align: "center",
+    field: "nombre",
+    sortable: true,
+  },
+  {
     name: "fecha1",
     align: "center",
     label: "Fecha",
@@ -125,7 +163,7 @@ const columns = ref([
   },
 ]);
 
-const loading = ref(false);  // Estado para el spinner
+const loading = ref(false); // Estado para el spinner
 
 const filterFn = (val, update, abort) => {
   update(() => {
@@ -137,9 +175,8 @@ const filterFn = (val, update, abort) => {
   });
 };
 
-
 async function traer() {
-  loading.value = true;  // Mostrar spinner
+  loading.value = true; // Mostrar spinner
   try {
     const resultado = await useBitacora.listarTodo();
 
@@ -155,12 +192,12 @@ async function traer() {
 
     console.log("Datos de las bitácoras:", rows.value);
   } finally {
-    loading.value = false;  // Ocultar spinner
+    loading.value = false; // Ocultar spinner
   }
 }
 
 async function cargarAprendices() {
-  loading.value = true;  // Mostrar spinner
+  loading.value = true; // Mostrar spinner
   try {
     const response = await useAprendiz.listarAprendiz();
     aprendices.value = response.data.map((aprendiz) => ({
@@ -174,12 +211,12 @@ async function cargarAprendices() {
     });
     console.error("Error al cargar los aprendices:", error);
   } finally {
-    loading.value = false;  // Ocultar spinner
+    loading.value = false; // Ocultar spinner
   }
 }
 
 async function cargarFichas() {
-  loading.value = true;  // Mostrar spinner
+  loading.value = true; // Mostrar spinner
   try {
     const response = await useFicha.listarFichas();
     fichas.value = response.data.map((ficha) => ({
@@ -193,7 +230,7 @@ async function cargarFichas() {
     });
     console.error("Error al cargar las fichas:", error);
   } finally {
-    loading.value = false;  // Ocultar spinner
+    loading.value = false; // Ocultar spinner
   }
 }
 
@@ -231,7 +268,7 @@ const validar = async () => {
     return;
   }
 
-  loading.value = true;  // Mostrar spinner durante la validación
+  loading.value = true; // Mostrar spinner durante la validación
   try {
     if (dialogTitle.value === "Editar Bitácora") {
       await useBitacora.actualizar({
@@ -245,7 +282,7 @@ const validar = async () => {
       });
     }
     await traer();
-    prompt.value = false;  // Cerrar el diálogo
+    prompt.value = false; // Cerrar el diálogo
   } catch (error) {
     q$.notify({
       type: "negative",
@@ -256,7 +293,7 @@ const validar = async () => {
       error.response ? error.response.data : error.message
     );
   } finally {
-    loading.value = false;  // Ocultar spinner
+    loading.value = false; // Ocultar spinner
   }
 };
 </script>
@@ -273,36 +310,38 @@ const validar = async () => {
   z-index: 2; /* Por encima de todo */
 }
 
-.crear{
+.crear {
   margin-bottom: 20px;
   margin-left: 20px;
 }
 
-.q-table__container div{
+.q-table__container div {
   display: flex;
   justify-content: center;
 }
 
-.q-table__container > div:first-child{
+.q-table__container > div:first-child {
   border-bottom: rgb(0, 136, 11) 4px solid;
   padding: 2%;
 }
 
-.q-table--horizontal-separator thead th, .q-table--horizontal-separator tbody tr:not(:last-child) > td, .q-table--cell-separator thead th, .q-table--cell-separator tbody tr:not(:last-child) > td{
+.q-table--horizontal-separator thead th,
+.q-table--horizontal-separator tbody tr:not(:last-child) > td,
+.q-table--cell-separator thead th,
+.q-table--cell-separator tbody tr:not(:last-child) > td {
   border-bottom-width: 3px !important;
 }
 
-.q-table__top{
-padding: 3px !important;
+.q-table__top {
+  padding: 3px !important;
 }
-th.text-center{
+th.text-center {
   font-size: 15px !important;
   font-weight: bold !important;
   color: rgb(1, 87, 0);
 }
 
-td{
+td {
   padding: 2% !important;
 }
-
 </style>

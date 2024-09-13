@@ -11,7 +11,7 @@ export const useUsuarioStore = defineStore("usuario", () => {
   const router = useRouter();
 
   const axiosInstance = axios.create({
-    baseURL: 'https://api-asistencia-sena.onrender.com/api',
+    baseURL: 'http://localhost:5001/api',
   });
 
   // Interceptor para agregar el token en cada solicitud
