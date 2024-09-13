@@ -8,7 +8,7 @@ export const useAprendizStore = defineStore("aprendiz", () => {
   const q = useQuasar();
   
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5001/api',
+    baseURL: 'https://front-knk1.onrender.com/api',
   });
 
   // Interceptor para agregar el token en cada solicitud

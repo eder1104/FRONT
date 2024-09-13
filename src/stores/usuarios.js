@@ -11,7 +11,7 @@ export const useUsuarioStore = defineStore("usuario", () => {
   const router = useRouter();
 
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5001/api',
+    baseURL: 'https://front-knk1.onrender.com/api',
   });
 
   // Interceptor para agregar el token en cada solicitud
