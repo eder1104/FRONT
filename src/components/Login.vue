@@ -3,7 +3,7 @@
     <div class="login">
       <q-form @submit.prevent="onSubmit" @reset="onReset" class="log">
         <h5 id="tittle"><b>REPFORA</b></h5>
-<img src="src\Images\logoSena.png" alt="Logo Del SENA" id="logoSENA">
+<img src="public\Images\logoSena.png" alt="Logo Del SENA" id="logoSENA">
         <q-select
         class="inputLogin"
           filled
