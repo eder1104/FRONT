@@ -6,7 +6,7 @@
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title>REPFORA</q-toolbar-title>
           <img
-            src="public\Images\Logo-Back-Home.png"
+            src="../../public/Images/Logo-Back-Home.png"
             @click="goToRoute('/Home')"
             class="width"
           />
@@ -41,12 +41,12 @@
 
           <q-img
             class="absolute-top"
-            src="public\Images\fondo_q-drawer.avif"
+            src="../../public/Images/fondo_q-drawer.avif"
             style="height: 150px"
           >
             <div class="absolute-bottom bg-transparent">
               <q-avatar size="56px" class="q-mb-sm">
-                <img src="public\Images\logo-blanco.png" />
+                <img src="../../public/Images/logo-blanco.png" />
               </q-avatar>
               <div class="text-weight-bold">{{ nombreUsuario }}</div>
               <div class="text-weight-bold">{{ emailUsuario }}</div>
@@ -61,7 +61,7 @@
           <div class="q-gutter-md grid" v-if="$route.path === '/Home'">
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Ficha')">
               <div class="fondo">
-                <q-img src="public\Images\Logo-Fichas.png" />
+                <q-img src="../../public/Images/Logo-Fichas.png" />
               </div>
               <q-card-section class="width">
                 <div class="text-h6 q-mt-sm q-mb-xs">FICHAS</div>
@@ -70,7 +70,7 @@
 
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Usuario')">
               <div class="fondo">
-                <q-img src="public\Images\Logo-Administrador.png" />
+                <q-img src="../../public/Images/Logo-Administrador.png" />
               </div>
               <q-card-section>
                 <div class="text-h6 q-mt-sm q-mb-xs">ADMINISTRADOR</div>
@@ -79,7 +79,7 @@
 
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Bitacora')">
               <div class="fondo">
-                <q-img src="public\Images\Logo-Bitacoras.png" />
+                <q-img src="../../public/Images/Logo-Bitacoras.png" />
               </div>
               <q-card-section>
                 <div class="text-h6 q-mt-sm q-mb-xs">BITACORAS</div>
@@ -88,7 +88,7 @@
 
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Aprendiz')">
               <div class="fondo">
-                <q-img src="public\Images\Logo-Aprendices.png" />
+                <q-img src="../../public/Images/Logo-Aprendices.png" />
               </div>
               <q-card-section>
                 <div class="text-h6 q-mt-sm q-mb-xs">APRENDICES</div>

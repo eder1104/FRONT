@@ -5,7 +5,7 @@
         <q-toolbar>
           <q-toolbar-title>REPFORA</q-toolbar-title>
           <img
-            src="public\Images\Logo-Back-Home.png"
+            src="../../public/Images/Logo-Back-Home.png"
             to="/"
             class="width"
           />
