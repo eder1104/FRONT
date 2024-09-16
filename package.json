@@ -1,0 +1,48 @@
+{
+  "name": "front-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@quasar/extras": "^1.16.12",
+    "axios": "^1.7.5",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "mongoose": "^8.6.0",
+    "nodemailer": "^6.9.14",
+    "pinia": "^2.2.2",
+    "pinia-plugin-persistedstate": "^3.2.3",
+    "quasar": "^2.16.9",
+    "vue": "^3.4.38",
+    "vue-router": "^4.4.3"
+  },
+  "devDependencies": {
+    "@quasar/vite-plugin": "^1.7.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "sass": "^1.33.0",
+    "vite": "^5.3.1"
+  },
+  "description": "Front proyecto asistencia",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianJJ5/FRONT.git"
+  },
+  "keywords": [
+    "asistencia"
+  ],
+  "author": "Julian Duran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JulianJJ5/FRONT/issues"
+  },
+  "homepage": "https://github.com/JulianJJ5/FRONT#readme"
+}
