@@ -1,13 +1,6 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
-
-      <div v-if="isLoading" class="fullscreen-spinner">
-        <q-spinner color="primary" size="3em" :thickness="2" />
-      </div>
-
-      <div v-else>
-
         <div>
           <q-select
             v-model="selectedAdmin"
@@ -40,16 +33,19 @@
             row-key="_id"
             ref="adminTable"
             pagination.sync="pagination"
+            :loading="isLoading"
             :rows-per-page-options="[20, 50, 100, 0]"
           >
-            <!-- Opciones de la fila (editar y activar/desactivar) -->
             <template v-slot:body-cell-opciones="props">
               <q-td :props="props">
-                <q-btn color="green-8" @click="dialogo('editar', props.row)">
+                <q-btn color="green-8" @click="dialogo('editar', props.row)"
+                :loading="loadingButtons[props.row._id]?.editar || false"
+                >
                   <font-awesome-icon icon="pen-to-square" />
                 </q-btn>
                 <q-btn
                   @click="activar(props.row._id)"
+                  :loading="loadingButtons[props.row._id]?.activar || false"
                   class="activar"
                   v-if="props.row.estado === 0"
                   >
@@ -58,6 +54,7 @@
                 >
                 <q-btn
                   @click="desactivar(props.row._id)"
+                  :loading="loadingButtons[props.row._id]?.desactivar || false"
                   class="desactivar"
                   v-else
                 >
@@ -66,7 +63,6 @@
               </q-td>
             </template>
 
-            <!-- Estado del usuario en la tabla -->
             <template v-slot:body-cell-estado1="props">
               <q-td :props="props">
                 <p :style="{ color: props.row.estado === 1 ? 'green' : 'red' }">
@@ -76,7 +72,6 @@
             </template>
           </q-table>
 
-          <!-- Diálogo para crear/editar administrador -->
           <q-dialog v-model="prompt" persistent>
             <q-card style="min-width: 350px">
               <q-card-section>
@@ -86,36 +81,52 @@
               <q-card-section class="q-pt-none">
                 <!-- Campos del formulario -->
                 <p>Nombre del Usuario</p>
-                <q-input dense v-model="inputNombreAdministrador" autofocus />
+                <q-input 
+                dense 
+                v-model="inputNombreAdministrador"
+                :disable="isLoading"
+                autofocus 
+                />
 
                 <p>Email</p>
-                <q-input dense v-model="inputEmailAdministrador" />
+                <q-input 
+                dense 
+                v-model="inputEmailAdministrador"
+                :disable="isLoading" 
+                />
 
-                <!-- Contraseña solo visible al crear un usuario -->
                 <p v-show="!editando">Contraseña</p>
                 <q-input
                   dense
                   v-model="inputContrasenaAdministrador"
                   v-show="!editando"
+                  :disable="isLoading"
                   type="password"
                 />
               </q-card-section>
 
-              <!-- Botones de acción en el diálogo -->
               <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cerrar" @click="prompt = false" />
-                <q-btn flat label="Guardar Administrador" @click="validar()" />
+                <q-btn 
+                flat 
+                label="Cerrar" 
+                :loading="isLoading"
+                @click="prompt = false" 
+                />
+                <q-btn 
+                flat 
+                label="Guardar Administrador" 
+                :loading="isLoading"
+                @click="validar()" />
               </q-card-actions>
             </q-card>
           </q-dialog>
         </div>
-      </div>
     </q-layout>
   </div>
 </template>
 
 <script setup>
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, onBeforeMount} from "vue";
 import { useQuasar } from "quasar";
 import { useUsuarioStore } from "../stores/usuarios.js";
 
@@ -131,19 +142,24 @@ const inputContrasenaAdministrador = ref("");
 const selectedAdmin = ref(null); // Valor del administrador seleccionado
 const filteredAdmins = ref([]); // Opciones filtradas
 const useUsuario = useUsuarioStore();
-const drawer = ref(false);
 const isLoading = ref(false);
-
-// Traer los datos de los administradores
+const loadingButtons = ref({});
 onBeforeMount(() => {
   traer();
 });
 
 async function traer() {
-  const response = await useUsuario.traer();
-  rows.value = response.data;
-  filteredAdmins.value = response.data; // Inicializar opciones del select con todos los administradores
-}
+    isLoading.value = true;
+    try {
+      const response = await useUsuario.traer();
+      rows.value = response.data;
+      filteredAdmins.value = response.data;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
 // Función para filtrar administradores por nombre (máximo 5 resultados y mejor coincidencia)
 const filterAdmins = (val, update) => {
@@ -204,6 +220,8 @@ const resetSelectInput = () => {
 
 // Validar la entrada del usuario (crear o editar)
 const validar = async () => {
+  isLoading.value = true;
+
   if (!inputNombreAdministrador.value || !inputEmailAdministrador.value) {
     q$.notify({
       type: "negative",
@@ -229,18 +247,34 @@ const validar = async () => {
     prompt.value = false; // Cerrar el diálogo
   } catch (error) {
     console.log(error);
-  }
+  } finally {
+      isLoading.value = false;
+    }
 };
 
 async function activar(id) {
-  await useUsuario.activar(id);
-  traer();
-}
+    loadingButtons.value[id] = { ...loadingButtons.value[id], activar: true };
+    try {
+      await useUsuario.activar(id);
+      traer();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      loadingButtons.value[id] = { ...loadingButtons.value[id], activar: false };
+    }
+  }
 
-async function desactivar(id) {
-  await useUsuario.desactivar(id);
-  traer();
-}
+  async function desactivar(id) {
+    loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: true };
+    try {
+      await useUsuario.desactivar(id);
+      traer();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: false };
+    }
+  }
 
 const dialogo = (accion, administrador = null) => {
   if (accion === "crear") {

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
+import { SessionStorage, useQuasar } from 'quasar';
 
 export const useUsuarioStore = defineStore("usuario", () => {
   const loading = ref(false);
@@ -57,12 +57,10 @@ export const useUsuarioStore = defineStore("usuario", () => {
     }
   };
 
-
-  
-
   const logout = () => {
     token.value = null;
     localStorage.removeItem('token');
+    SessionStorage.removeItem('nombre', 'email')
     router.push('/');
   };
 

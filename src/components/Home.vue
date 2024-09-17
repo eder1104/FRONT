@@ -28,14 +28,16 @@
           >
             <q-list padding>
               <q-btn class="menuButton" to="/Home/Ficha" label="FICHAS" />
-              <br /><br />
+              <br/><br/>
               <q-btn class="menuButton" to="/Home/Usuario" label="ADMINISTRADORES" />
-              <br /><br />
+              <br/><br/>
               <q-btn class="menuButton" to="/Home/Bitacora" label="BITACORAS" />
-              <br /><br />
+              <br/><br/>
               <q-btn class="menuButton" to="/Home/Aprendiz" label="APRENDICES" />
-              <br /><br />
+              <br/><br/>
               <q-btn class="menuButton" to="/Home" label="HOME" />
+              <q-btn class="menuButtonSession" to="/" label="Cerrar sesión" @click="logout()"/>
+
             </q-list>
           </q-scroll-area>
 
@@ -104,12 +106,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useUsuarioStore } from "../stores/usuarios";
 
 const drawer = ref(false);
 const router = useRouter();
 const isLoading = ref(false)
 const nombreUsuario = ref('')
 const emailUsuario = ref('')
+const useUsuario = useUsuarioStore
+
 
 function goToRoute(route) {
   router.push(route);
@@ -119,6 +124,10 @@ onMounted(() => {
     nombreUsuario.value = sessionStorage.getItem('nombre') || ''
     emailUsuario.value = sessionStorage.getItem('email') || ''
   });
+
+  const logout = async () => {
+    const response = await useUsuario.logout()
+  }
 </script>
 
 <style>
@@ -166,6 +175,16 @@ onMounted(() => {
   font-size: 17px !important;
   width: 90% !important;
   margin-left: 4% !important;
+}
+
+.menuButtonSession {
+  background-color: #df1f1f !important;
+  color: white !important;
+  font-size: 17px !important;
+  width: 90% !important;
+  margin-left: 4% !important;
+  top: 100px !important;
+  position: relative !important;
 }
 
 .q-table__title{

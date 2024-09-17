@@ -2,30 +2,34 @@
   <router-view>
   <q-layout view="lHh Lpr lff">
 
-    <!-- Main content -->
-    <q-page-container :style="pageContainerStyle">
+    <q-page-container>
       <q-btn
         color="green-8"
         @click="abrirDialogo()"
         label="Crear Aprendiz"
-        class="crear_ape"
       />
       <q-table
         title="APRENDICES"
         :rows="rows"
         :columns="columns"
         row-key="name"
+        :loading="isLoading"
         class="tabla"
         pagination.sync="pagination"
         :rows-per-page-options="[20, 50, 100, 0]"
       >
         <template v-slot:body-cell-opciones="props">
           <q-td :props="props">
-            <q-btn color="green-8" @click="dialogo('editar', props.row)">
+            <q-btn 
+            color="green-8" 
+            @click="dialogo('editar', props.row)"
+            :loading="loadingButtons[props.row._id]?.editar || false"
+            >
                   <font-awesome-icon icon="pen-to-square" />
                 </q-btn>
                 <q-btn
                   @click="activar(props.row._id)"
+                  :loading="loadingButtons[props.row._id]?.activar || false"
                   class="activar"
                   v-if="props.row.estado === 0"
                   >
@@ -34,6 +38,7 @@
                 >
                 <q-btn
                   @click="desactivar(props.row._id)"
+                  :loading="loadingButtons[props.row._id]?.desactivar || false"
                   class="desactivar"
                   v-else
                 >
@@ -63,6 +68,7 @@
             <q-input
               dense
               v-model="inputNombreAprendiz"
+              :disable="isLoading"
               autofocus
               @keyup.enter="guardar()"
             />
@@ -70,18 +76,21 @@
             <q-input
               dense
               v-model="inputDocumentoAprendiz"
+              :disable="isLoading"
               @keyup.enter="guardar()"
             />
             <p>Teléfono del Aprendiz</p>
             <q-input
               dense
               v-model="inputTelefonoAprendiz"
+              :disable="isLoading"
               @keyup.enter="guardar()"
             />
             <p>Email del Aprendiz</p>
             <q-input
               dense
               v-model="inputEmailAprendiz"
+              :disable="isLoading"
               @keyup.enter="guardar()"
             />
             <p>Ficha del aprendiz</p>
@@ -89,6 +98,7 @@
               dense
               v-model="selectedFicha"
               :options="fichas"
+              :disable="isLoading"
               option-label="codigo"
               option-value="_id"
               label="Seleccionar Ficha"
@@ -96,8 +106,19 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary1">
-            <q-btn flat label="Cerrar" v-close-popup />
-            <q-btn flat label="Guardar" @click="guardar()" />
+            <q-btn 
+            flat 
+            label="Cerrar" 
+            :loading="isLoading"
+            v-close-popup 
+            />
+
+            <q-btn 
+            flat 
+            label="Guardar"
+            :loading="isLoading"
+            @click="guardar()" 
+            />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -111,7 +132,8 @@ import { useQuasar } from 'quasar';
 import { useAprendizStore } from '../stores/aprendiz.js';
 import { useFichaStore } from '../stores/Ficha.js';
 
-const drawer = ref(false);
+const isLoading = ref(false);
+const loadingButtons = ref({});
 const prompt = ref(false);
 const inputNombreAprendiz = ref('');
 const inputDocumentoAprendiz = ref('');
@@ -171,19 +193,22 @@ const useAprendiz = useAprendizStore();
 const useFicha = useFichaStore();
 const $q = useQuasar();
 
-const pageContainerStyle = computed(() => ({
-  transition: 'margin-left 0.3s'
-}));
-
 onBeforeMount(() => {
   traer();
   traerFichas();
 });
 
 async function traer() {
-  const resultado = await useAprendiz.listarAprendiz();
-  rows.value = resultado.data;
-}
+    isLoading.value = true;
+    try {
+      const resultado = await useAprendiz.listarAprendiz();
+      rows.value = resultado.data;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
 function abrirDialogo(row = null) {
   if (row) {
@@ -207,6 +232,7 @@ function abrirDialogo(row = null) {
 }
 
 async function traerFichas() {
+  isLoading.value = true;
   try {
     const inf = await useFicha.listarFichas();
     fichas.value = inf.data.map(ficha => ({
@@ -219,10 +245,14 @@ async function traerFichas() {
       message: 'Error al cargar las fichas.',
     });
     console.error('Error al cargar las fichas:', error);
+  } finally{
+    isLoading.value = false;
+
   }
 }
 
 async function guardar() {
+  isLoading.value = true;
   const fichaId = selectedFicha.value.id || selectedFicha.value;
 
   if (
@@ -287,10 +317,13 @@ async function guardar() {
       message: 'Error al procesar la solicitud.',
     });
     console.error('Error en guardar:', error);
-  }
+  } finally {
+      isLoading.value = false;
+    }
 }
 
 async function activar(id) {
+  loadingButtons.value[id] = { ...loadingButtons.value[id], activar: true };
   try {
     await useAprendiz.activarAprendiz(id);
     traer();
@@ -300,10 +333,13 @@ async function activar(id) {
       message: 'Error al activar el aprendiz.',
     });
     console.error('Error al activar el aprendiz:', error);
+  } finally {
+    loadingButtons.value[id] = { ...loadingButtons.value[id], activar: false };
   }
 }
 
 async function desactivar(id) {
+  loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: true };
   try {
     await useAprendiz.desactivarAprendiz(id);
     traer();
@@ -317,12 +353,11 @@ async function desactivar(id) {
       message: 'Error al desactivar el aprendiz.',
     });
     console.error('Error al desactivar el aprendiz:', error);
+  } finally {
+    loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: false };
   }
 }
 
-function goToRoute(route) {
-  router.push(route);
-}
 </script>
 
 <style>
@@ -332,56 +367,8 @@ function goToRoute(route) {
   cursor: pointer;
 }
 
-.width:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-#footer_inf {
-  background-color: rgb(158, 158, 158) !important;
-  color: black;
-  bottom: -50px;
-}
-
-#footer_inf div {
-  display: flex;
-  text-align: center;
-  font-family: Georgia, "Times New Roman", Times, serif;
-  justify-content: center;
-  place-items: center;
-  background-color: rgb(227, 227, 227);
-  position: fixed;
-}
-
-.q-layout {
-  width: 101% !important;
-}
-
 .text {
   font-size: 70%;
   font-weight: bolder;
 }
-
-.fullscreen-spinner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 9999;
-}
-
-.menu {
-  position: relative;
-}
-
-/* .q-drawer {
-}
-
-.q-page-container {
-} */
 </style>

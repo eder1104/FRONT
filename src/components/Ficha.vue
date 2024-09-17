@@ -85,7 +85,7 @@
             <q-input
               dense
               v-model="inputCodigoFicha"
-              :disable="loading"
+              :disable="loadingGeneral"
               autofocus
               @keydown="preventNonNumeric"
               @input="formatInputCodigoFicha"
