@@ -1,123 +1,128 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
+      <q-select
+        outlined
+        v-model="fichaId"
+        use-input
+        hide-selected
+        fill-input
+        input-debounce="0"
+        :options="options"
+        option-value="_id"
+        option-label="nombre"
+        label="Buscar Ficha"
+        @filter="filterFn"
+        style="width: 250px; padding-bottom: 32px"
+        pagination.sync="pagination"
+        :rows-per-page-options="[20, 50, 100, 0]"
+      >
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              No hay resultados
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
 
+      <q-btn color="green-8" @click="dialogo('crear')" label="Crear Ficha" />
 
-      <div v-if="isLoading" class="fullscreen-spinner">
-        <q-spinner color="primary" size="3em" :thickness="2" />
-      </div>
-
-      <div v-else>
-
-        <q-select
-          outlined
-          v-model="fichaId"
-          use-input
-          hide-selected
-          fill-input
-          input-debounce="0"
-          :options="options"
-          option-value="_id"
-          option-label="nombre"
-          label="Buscar Ficha"
-          @filter="filterFn"
-          style="width: 250px; padding-bottom: 32px"
-          pagination.sync="pagination"
-          :rows-per-page-options="[20, 50, 100, 0]"
-        >
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                No hay resultados
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
-
-        <q-btn
-          color="green-8"
-          @click="dialogo('crear')"
-          label="Crear Ficha"
-        />
-
-        <q-table
-          class="posicion"
-          title="FICHAS"
-          :rows="rows"
-          :columns="columns"
-          row-key="name"
-        >
-          <template v-slot:body-cell-opciones="props">
-            <q-td :props="props">
-              <q-btn color="green-8" @click="dialogo('editar', props.row)">
-                  <font-awesome-icon icon="pen-to-square" />
-                </q-btn>
-                <q-btn
-                  @click="activar(props.row._id)"
-                  class="activar"
-                  v-if="props.row.estado === 0"
-                  >
-                  <font-awesome-icon icon="fa-solid fa-check" style="color: #ffffff;" />
-                  </q-btn
-                >
-                <q-btn
-                  @click="desactivar(props.row._id)"
-                  class="desactivar"
-                  v-else
-                >
-                  <font-awesome-icon icon="ban" style="color: #ffffff;"/>
-                </q-btn>
-            </q-td>
-          </template>
-          <template v-slot:body-cell-estado1="props">
-            <q-td :props="props">
-              <p style="color: green" v-if="props.row.estado == 1">Activo</p>
-              <p style="color: red" v-else>Inactivo</p>
-            </q-td>
-          </template>
-        </q-table>
-
-        <q-dialog v-model="prompt" persistent>
-          <q-card style="min-width: 350px">
-            <q-card-section>
-              <div class="text-h6">{{ dialogTitle }}</div>
-            </q-card-section>
-
-            <q-card-section class="q-pt-none">
-              <p>Codigo de ficha</p>
-              <q-input
-                dense
-                v-model="inputCodigoFicha"
-                autofocus
-                @keydown="preventNonNumeric"
-                @input="formatInputCodigoFicha"
-                @keyup.enter="prompt = false"
+      <q-table
+        class="posicion"
+        title="FICHAS"
+        :rows="rows"
+        :loading="loadingGeneral"
+        :columns="columns"
+        row-key="name"
+      >
+        <template v-slot:body-cell-opciones="props">
+          <q-td :props="props">
+            <q-btn
+              color="green-8"
+              @click="dialogo('editar', props.row)"
+              :loading="loadingButtons[props.row._id]?.editar || false"
+              >
+              <font-awesome-icon icon="pen-to-square" />
+            </q-btn>
+            <q-btn
+              @click="activar(props.row._id)"
+              :loading="loadingButtons[props.row._id]?.activar || false"
+              class="activar"
+              v-if="props.row.estado === 0"
+            >
+              <font-awesome-icon
+                icon="fa-solid fa-check"
+                style="color: #ffffff"
               />
+            </q-btn>
+            <q-btn
+              @click="desactivar(props.row._id)"
+              :loading="loadingButtons[props.row._id]?.desactivar || false"
+              class="desactivar"
+              v-else
+            >
+              <font-awesome-icon icon="ban" style="color: #ffffff" />
+            </q-btn>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-estado1="props">
+          <q-td :props="props">
+            <p style="color: green" v-if="props.row.estado == 1">Activo</p>
+            <p style="color: red" v-else>Inactivo</p>
+          </q-td>
+        </template>
+      </q-table>
 
-              <p>Nombre de Ficha</p>
-              <q-input
-                dense
-                v-model="inputNombreFicha"
-                autofocus
-                @keyup.enter="prompt = false"
-              />
-            </q-card-section>
+      <q-dialog v-model="prompt" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">{{ dialogTitle }}</div>
+          </q-card-section>
 
-            <q-card-actions align="right" class="text-primary">
-              <q-btn flat label="Cerrar" v-close-popup @click="validar()" />
+          <q-card-section class="q-pt-none">
+            <p>Codigo de ficha</p>
+            <q-input
+              dense
+              v-model="inputCodigoFicha"
+              :disable="loading"
+              autofocus
+              @keydown="preventNonNumeric"
+              @input="formatInputCodigoFicha"
+              @keyup.enter="prompt = false"
+            />
 
-              <q-btn flat label="Guardar Ficha" @click="validar()" />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-      </div>
+            <p>Nombre de Ficha</p>
+            <q-input
+              dense
+              :disable="loadingGeneral"
+              v-model="inputNombreFicha"
+              autofocus
+              @keyup.enter="prompt = false"
+            />
+          </q-card-section>
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn 
+            flat label="Cerrar" 
+            v-close-popup 
+            :loading="loadingButtons"
+            @click="validar()" />
+
+            <q-btn 
+            flat 
+            label="Guardar Ficha" 
+            :loading="loadingButtons"
+            @click="validar()" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-layout>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
 import { onBeforeMount } from "vue";
 import { useQuasar } from "quasar";
 import { useFichaStore } from "../stores/Ficha.js";
@@ -127,9 +132,8 @@ const prompt = ref(false);
 const inputCodigoFicha = ref("");
 const inputNombreFicha = ref("");
 const rows = ref([]);
-const loading = ref(false);
-const drawer = ref(false);
-const isLoading = ref(false);
+const loadingGeneral = ref(false); 
+const loadingButtons = ref({}); 
 
 let dialogTitle = ref("");
 let editando = ref(false);
@@ -152,9 +156,9 @@ onBeforeMount(() => {
 });
 
 const traer = async () => {
+  loadingGeneral.value = true;
   try {
-    loading.value = true;
-    inf = await useFicha.listarFichas()
+    inf = await useFicha.listarFichas();
     console.log(inf);
     if (Array.isArray(inf.data)) {
       rows.value = inf.data;
@@ -173,49 +177,48 @@ const traer = async () => {
       message: "Error al conectar con el servidor.",
     });
   } finally {
-    loading.value = false;
+    loadingGeneral.value = false;
   }
 };
 
 const buscarFicha = async (id) => {
   try {
-    loading.value = true;
-    inf = await useFicha.listarporids(id)
+    loadingGeneral.value = true;
+    inf = await useFicha.listarporids(id);
     traer();
   } catch (error) {
     console.log(error);
   } finally {
-    loading.value = false;
+    loadingGeneral.value = false;
   }
 };
 
 async function activar(id) {
-  console.log(id);
+  loadingButtons.value[id] = { ...loadingButtons.value[id], activar: true };
   try {
-    loading.value = true;
-    inf = await useFicha.activar(id)
+    inf = await useFicha.activar(id);
     traer();
   } catch (error) {
     console.log(error);
   } finally {
-    loading.value = false;
+    loadingButtons.value[id] = { ...loadingButtons.value[id], activar: false };
   }
 }
 
 async function desactivar(id) {
-  console.log(id);
+  loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: true };
   try {
-    loading.value = true;
-    inf = await useFicha.desactivar(id)
+    inf = await useFicha.desactivar(id);
     traer();
   } catch (error) {
     console.log(error);
   } finally {
-    loading.value = false;
+    loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: false };
   }
 }
 
 const validar = async () => {
+  loadingGeneral.value = true;
   if (!inputCodigoFicha.value || !inputNombreFicha.value) {
     q$.notify({
       type: "negative",
@@ -225,11 +228,11 @@ const validar = async () => {
   }
 
   try {
-    loading.value = true;
     const token = localStorage.getItem("token");
 
     if (editando.value) {
-      await useFicha.actualizar(fichaId.value,
+      await useFicha.actualizar(
+        fichaId.value,
         {
           codigo: inputCodigoFicha.value,
           nombre: inputNombreFicha.value,
@@ -261,7 +264,7 @@ const validar = async () => {
       message: "Error al guardar la ficha.",
     });
   } finally {
-    loading.value = false;
+    loadingGeneral.value = false;
   }
 };
 
@@ -277,6 +280,7 @@ const dialogo = (accion, ficha = null) => {
     inputNombreFicha.value = ficha.nombre;
     fichaId.value = ficha._id;
     editando.value = true;
+    loadingButtons.value[ficha._id] = { ...loadingButtons.value[ficha._id], editar: false };
   }
   prompt.value = true;
 };
@@ -330,4 +334,10 @@ const formatInputCodigoFicha = (event) => {
 };
 </script>
 
-<style></style>
+<style>
+.activar, .desactivar{
+  color: white;
+}
+
+
+</style>

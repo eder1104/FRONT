@@ -1,16 +1,6 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
-    
-      <div v-if="isLoading" class="fullscreen-spinner">
-        <q-spinner color="primary" size="3em" :thickness="2" />
-      </div>
-
-      <div v-else>
-
-        <div v-if="loading" class="spinner-container" :style="{ zIndex: 2 }">
-          <q-spinner color="primary" size="3em" :thickness="2" />
-        </div>
 
         <q-btn
           color="green-8"
@@ -75,6 +65,7 @@
           row-key="name"
           pagination.sync="pagination"
           :rows-per-page-options="[20, 50, 100, 0]"
+          :loading="loading"
         >
           <div>
             <hr style="border: 1px solid black; width: 50%; margin: auto" />
@@ -99,14 +90,12 @@
             </q-td>
           </template>
         </q-table>
-      </div>
     </q-layout>
   </div>
 </template>
 
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import axios from "axios";
 import { useQuasar } from "quasar";
 import { useBitacoraStore } from "../stores/bitacora.js";
 import { useAprendizStore } from "../stores/aprendiz.js";
@@ -119,10 +108,9 @@ onBeforeMount(() => {
 });
 
 const prompt = ref(false);
+const loading = ref(false);
 const selectedAprendiz = ref(null);
-const fecha = ref(false);
-const abrirCalendario = ref(false);
-const selectedFicha = ref(null);
+const fecha = ref(null);
 const aprendices = ref([]);
 const fichas = ref([]);
 const dialogTitle = ref("");
@@ -165,8 +153,6 @@ const columns = ref([
   },
 ]);
 
-const loading = ref(false); // Estado para el spinner
-
 const filterFn = (val, update, abort) => {
   update(() => {
     const needle = val.toLowerCase();
@@ -178,7 +164,7 @@ const filterFn = (val, update, abort) => {
 };
 
 async function traer() {
-  loading.value = true; // Mostrar spinner
+  loading.value = true;
   try {
     const resultado = await useBitacora.listarTodo();
 
@@ -194,12 +180,12 @@ async function traer() {
 
     console.log("Datos de las bitácoras:", rows.value);
   } finally {
-    loading.value = false; // Ocultar spinner
+    loading.value = false;
   }
 }
 
 async function cargarAprendices() {
-  loading.value = true; // Mostrar spinner
+  loading.value = true;
   try {
     const response = await useAprendiz.listarAprendiz();
     aprendices.value = response.data.map((aprendiz) => ({
@@ -213,12 +199,12 @@ async function cargarAprendices() {
     });
     console.error("Error al cargar los aprendices:", error);
   } finally {
-    loading.value = false; // Ocultar spinner
+    loading.value = false;
   }
 }
 
 async function cargarFichas() {
-  loading.value = true; // Mostrar spinner
+  loading.value = true; 
   try {
     const response = await useFicha.listarFichas();
     fichas.value = response.data.map((ficha) => ({
@@ -232,7 +218,7 @@ async function cargarFichas() {
     });
     console.error("Error al cargar las fichas:", error);
   } finally {
-    loading.value = false; // Ocultar spinner
+    loading.value = false;
   }
 }
 
@@ -270,7 +256,7 @@ const validar = async () => {
     return;
   }
 
-  loading.value = true; // Mostrar spinner durante la validación
+  loading.value = true;
   try {
     if (dialogTitle.value === "Editar Bitácora") {
       await useBitacora.actualizar({
@@ -284,7 +270,7 @@ const validar = async () => {
       });
     }
     await traer();
-    prompt.value = false; // Cerrar el diálogo
+    prompt.value = false;
   } catch (error) {
     q$.notify({
       type: "negative",
@@ -295,23 +281,12 @@ const validar = async () => {
       error.response ? error.response.data : error.message
     );
   } finally {
-    loading.value = false; // Ocultar spinner
+    loading.value = false;
   }
 };
 </script>
 
 <style>
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  position: fixed;
-  width: 100vw;
-  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
-  z-index: 2; /* Por encima de todo */
-}
-
 .crear {
   margin-bottom: 20px;
   margin-left: 20px;

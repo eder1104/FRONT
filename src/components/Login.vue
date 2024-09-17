@@ -3,9 +3,13 @@
     <div class="login">
       <q-form @submit.prevent="onSubmit" @reset="onReset" class="log">
         <h5 id="tittle"><b>REPFORA</b></h5>
-<img src="../assets/Images/logoSena.png" alt="Logo Del SENA" id="logoSENA">
+        <img
+          src="../assets/Images/logoSena.png"
+          alt="Logo Del SENA"
+          id="logoSENA"
+        />
         <q-select
-        class="inputLogin"
+          class="inputLogin"
           filled
           v-model="role"
           label="Seleccione el rol"
@@ -14,7 +18,7 @@
 
         <div v-if="role === 'Administrador'" class="inputs">
           <q-input
-          class="inputLogin"
+            class="inputLogin"
             filled
             type="text"
             v-model="email"
@@ -23,7 +27,7 @@
             :rules="[(val) => !!val || 'El correo es requerido']"
           />
           <q-input
-          class="inputLogin"
+            class="inputLogin"
             filled
             :type="showPassword ? 'text' : 'password'"
             v-model="contrasena"
@@ -44,7 +48,7 @@
 
         <div v-if="role === 'Aprendiz'" class="inputs">
           <q-input
-          class="inputLogin"
+            class="inputLogin"
             filled
             type="text"
             v-model="documento"
@@ -55,12 +59,21 @@
         </div>
 
         <div v-if="role" class="bottom">
-          <q-btn label="Ingresar" type="submit" class="register" />
+          <q-btn 
+          :loading="loading"
+          label="Ingresar" 
+          type="submit" 
+          class="register" />
         </div>
 
         <!-- Restablecer contraseña (Solo visible para el Administrador) -->
         <div v-if="role === 'Administrador'" class="bottom">
-          <router-link to="/Recuperacion" class="cursor-pointer" id="recuperacion">Restablecer Contraseña</router-link>
+          <router-link
+            to="/Recuperacion"
+            class="cursor-pointer"
+            id="recuperacion"
+            >Restablecer Contraseña</router-link
+          >
         </div>
       </q-form>
     </div>
@@ -80,14 +93,16 @@ const showPassword = ref(false);
 const email = ref(null);
 const contrasena = ref(null);
 const documento = ref(null);
-const nombre = ref('');
+const nombre = ref("");
 const role = ref(null); // Guardará el rol seleccionado (Administrador o Aprendiz)
-const roles = ref(['Administrador', 'Aprendiz']); // Opciones del select
+const roles = ref(["Administrador", "Aprendiz"]); // Opciones del select
 const router = useRouter();
+const loading = ref(false);
 
 const onSubmit = async () => {
+  loading.value = true;
   try {
-    if (role.value === 'Administrador') {
+    if (role.value === "Administrador") {
       const res = await axios.post(
         "https://api-asistencia-sena.onrender.com/api/Usuarios/loginusuario",
         {
@@ -101,8 +116,7 @@ const onSubmit = async () => {
       sessionStorage.setItem("email", email.value);
       Notify.create({ type: "positive", message: "Inicio de sesión exitoso" });
       router.push("/Home");
-    } else if (role.value === 'Aprendiz') {
-      // Lógica de inicio de sesión para Aprendiz usando el documento
+    } else if (role.value === "Aprendiz") {
       Notify.create({ type: "positive", message: "Inicio como Aprendiz" });
     }
   } catch (error) {
@@ -110,6 +124,8 @@ const onSubmit = async () => {
       type: "negative",
       message: error.response?.data?.msg || "Error en el inicio de sesión",
     });
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -156,7 +172,7 @@ const togglePasswordVisibility = () => {
   border-top-right-radius: 10px;
 }
 
-#logoSENA{
+#logoSENA {
   width: 40%;
   padding: 5%;
 }
@@ -181,16 +197,15 @@ const togglePasswordVisibility = () => {
   margin: 2%;
 }
 
-.inputLogin{
+.inputLogin {
   padding: 2% !important;
 }
 
-#recuperacion{
+#recuperacion {
   color: #2e7d32;
   font-weight: bold;
   font-size: 17px;
   margin: 2% !important;
   text-decoration: none;
 }
-
 </style>
