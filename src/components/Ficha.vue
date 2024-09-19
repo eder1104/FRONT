@@ -1,30 +1,6 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
-      <q-select
-        outlined
-        v-model="fichaId"
-        use-input
-        hide-selected
-        fill-input
-        input-debounce="0"
-        :options="options"
-        option-value="_id"
-        option-label="nombre"
-        label="Buscar Ficha"
-        @filter="filterFn"
-        style="width: 250px; padding-bottom: 32px"
-        pagination.sync="pagination"
-        :rows-per-page-options="[20, 50, 100, 0]"
-      >
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              No hay resultados
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-select>
 
       <q-btn color="green-8" @click="dialogo('crear')" label="Crear Ficha" />
 
@@ -142,15 +118,6 @@ let q$ = useQuasar();
 const options = ref([]);
 let useFicha = useFichaStore();
 
-const filterFn = (val, update, abort) => {
-  update(() => {
-    const needle = val.toLowerCase();
-    options.value = rows.value.filter((ficha) =>
-      ficha.nombre.toLowerCase().includes(needle)
-    );
-  });
-};
-
 onBeforeMount(() => {
   traer();
 });
@@ -176,18 +143,6 @@ const traer = async () => {
       type: "negative",
       message: "Error al conectar con el servidor.",
     });
-  } finally {
-    loadingGeneral.value = false;
-  }
-};
-
-const buscarFicha = async (id) => {
-  try {
-    loadingGeneral.value = true;
-    inf = await useFicha.listarporids(id);
-    traer();
-  } catch (error) {
-    console.log(error);
   } finally {
     loadingGeneral.value = false;
   }

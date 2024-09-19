@@ -27,6 +27,8 @@
             "
           >
             <q-list padding>
+              <q-btn class="menuButton" to="/Home" label="HOME" />
+              <br/><br/>
               <q-btn class="menuButton" to="/Home/Ficha" label="FICHAS" />
               <br/><br/>
               <q-btn class="menuButton" to="/Home/Usuario" label="ADMINISTRADORES" />
@@ -35,7 +37,6 @@
               <br/><br/>
               <q-btn class="menuButton" to="/Home/Aprendiz" label="APRENDICES" />
               <br/><br/>
-              <q-btn class="menuButton" to="/Home" label="HOME" />
               <q-btn class="menuButtonSession" to="/" label="Cerrar sesión" @click="logout()"/>
 
             </q-list>

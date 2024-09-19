@@ -5,11 +5,11 @@ import { Notify } from 'quasar'
 import { router } from "./routes/routes.js"
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faPenToSquare, faBan, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faBan, faCheck, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // Añadir el ícono a la librería de Font Awesome
-library.add(faPenToSquare, faBan, faCheck)
+library.add(faPenToSquare, faBan, faCheck, faFileInvoice)
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'

@@ -2,22 +2,6 @@
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
         <div>
-          <q-select
-            v-model="selectedAdmin"
-            :options="filteredAdmins"
-            option-value="_id"
-            option-label="nombre"
-            emit-value
-            map-options
-            use-input
-            fill-input
-            label="Buscar Administrador"
-            filled
-            @filter="filterAdmins"
-            @input="handleInput"
-            @blur="resetSelectInput"
-          />
-          <br />
           <q-btn
             color="green-8"
             @click="dialogo('crear')"
@@ -25,7 +9,6 @@
           />
           <br /><br />
 
-          <!-- Tabla de administradores -->
           <q-table
             title="ADMINISTRADORES"
             :rows="rows"
@@ -79,7 +62,6 @@
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                <!-- Campos del formulario -->
                 <p>Nombre del Usuario</p>
                 <q-input 
                 dense 
@@ -139,8 +121,6 @@ const usuarioId = ref(null); // Esto es donde almacenamos el id del usuario que 
 const inputNombreAdministrador = ref("");
 const inputEmailAdministrador = ref("");
 const inputContrasenaAdministrador = ref("");
-const selectedAdmin = ref(null); // Valor del administrador seleccionado
-const filteredAdmins = ref([]); // Opciones filtradas
 const useUsuario = useUsuarioStore();
 const isLoading = ref(false);
 const loadingButtons = ref({});
@@ -153,7 +133,6 @@ async function traer() {
     try {
       const response = await useUsuario.traer();
       rows.value = response.data;
-      filteredAdmins.value = response.data;
     } catch (error) {
       console.log(error);
     } finally {
@@ -161,64 +140,6 @@ async function traer() {
     }
   }
 
-// Función para filtrar administradores por nombre (máximo 5 resultados y mejor coincidencia)
-const filterAdmins = (val, update) => {
-  update(() => {
-    const needle = val.toLowerCase();
-    filteredAdmins.value = rows.value
-      .filter((admin) => admin.nombre.toLowerCase().includes(needle))
-      .sort((a, b) => {
-        // Prioriza los nombres que empiezan con la cadena buscada
-        return (
-          a.nombre.toLowerCase().indexOf(needle) -
-          b.nombre.toLowerCase().indexOf(needle)
-        );
-      })
-      .slice(0, 5); // Limitar a 5 resultados
-  });
-};
-
-const scrollToAdmin = (adminId) => {
-  const adminTable = $refs.adminTable; // Referencia a la tabla
-  const index = rows.value.findIndex((row) => row._id === adminId);
-
-  if (index !== -1) {
-    // Calcula la página correcta
-    const rowsPerPage = adminTable.pagination.rowsPerPage;
-    const page = Math.floor(index / rowsPerPage) + 1;
-
-    // Establece la paginación y espera que la tabla actualice
-    adminTable.setPagination({ page });
-
-    // Asegura que la fila esté visible después de la actualización
-    setTimeout(() => {
-      const rowsEl = adminTable.$el.querySelectorAll(".q-table__rows tr");
-      const rowEl = rowsEl[index % rowsPerPage]; // Index dentro de la página actual
-
-      if (rowEl) {
-        rowEl.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 500); // Ajusta el tiempo si es necesario
-  }
-};
-
-const handleInput = (adminId) => {
-  const admin = rows.value.find((row) => row._id === adminId);
-  if (admin) {
-    selectedAdmin.value = admin._id; // Almacena solo el ID para evitar duplicaciones
-    scrollToAdmin(adminId); // Llama a la función para desplazar la tabla
-  }
-};
-
-const resetSelectInput = () => {
-  const admin = rows.value.find((row) => row._id === selectedAdmin.value);
-  if (admin) {
-    // Restablece solo el nombre del usuario en el campo después de la selección
-    selectedAdmin.value = admin._id;
-  }
-};
-
-// Validar la entrada del usuario (crear o editar)
 const validar = async () => {
   isLoading.value = true;
 

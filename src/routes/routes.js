@@ -7,6 +7,7 @@ import Aprendiz from "../components/Aprendiz.vue"
 import Recuperacion from "../components/Recuperacion.vue"
 import ListaAprendiz from "../components/ListaAprendiz.vue"
 import Asistencia from "../components/Asistencia.vue"
+import TablaAsistencia from "../components/TablaAsistencia.vue"
 
 import {createRouter, createWebHashHistory} from "vue-router"
 
@@ -14,6 +15,7 @@ import {createRouter, createWebHashHistory} from "vue-router"
 const routes = [
   {path: "/", component: Login},
   {path: "/Recuperacion", component: Recuperacion},
+  {path: "/Tabla", component: TablaAsistencia},
 {
   path: "/Home", component: Home, children:[
     {path: "Usuario", component: Usuario},
@@ -21,7 +23,8 @@ const routes = [
     {path: "Ficha", component: Ficha},
     {path: "Aprendiz", component: Aprendiz},
     {path: "Listado", component: ListaAprendiz},
-    {path: "Asistencia", component: Asistencia}]
+    {path: "Asistencia", component: Asistencia},
+  ]
 }
 
 ]

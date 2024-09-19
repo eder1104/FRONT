@@ -127,7 +127,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { useQuasar } from 'quasar';
 import { useAprendizStore } from '../stores/aprendiz.js';
 import { useFichaStore } from '../stores/Ficha.js';

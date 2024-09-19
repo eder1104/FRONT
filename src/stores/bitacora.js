@@ -8,7 +8,8 @@ export const useBitacoraStore = defineStore("bitacora", () => {
   const q = useQuasar();
   
   const axiosInstance = axios.create({
-    baseURL: 'https://api-asistencia-sena.onrender.com/api',
+    // baseURL: 'https://api-asistencia-sena.onrender.com/api',
+    baseURL: 'http://localhost:5001/api',
   });
 
   // Interceptor para agregar el token en cada solicitud
@@ -60,6 +61,19 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
+  const listarBitacoraPorEstado = async () => {
+    try{
+      const r = await axiosInstance.get("/Bitacoras/listarPorEstado");
+      return r
+    } catch (error){
+      q.notify({
+        type: 'negative',
+        message: 'Error al listar por estado',
+      });
+      throw error;
+    }
+  };
+
   const listarPorAprendiz = async (id_aprendiz) => {
     try {
       const r = await axiosInstance.get(`/Bitacoras/listarporaprendiz/${id_aprendiz}`);
@@ -73,9 +87,9 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
-  const crearBitacora = async (id_aprendiz, fecha) => {
+  const crearBitacora = async (bitacoraData) => {
     try {
-      const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, { id_aprendiz, fecha });
+      const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
       q.notify({
         type: 'positive',
         message: 'Bitácora creada con éxito',
@@ -90,29 +104,31 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
-  const actualizar = async (id) => {
+  const actualizarEstado = async (id, estado) => {
     try {
-      const r = await axiosInstance.put(`/Bitacoras/actualizar/${id}`);
+      const r = await axiosInstance.put(`/Bitacoras/actualizarEstado/${id}`, { estado });
       q.notify({
         type: 'positive',
-        message: 'Bitácora actualizada con éxito',
+        message: 'Estado de la bitácora actualizado con éxito',
       });
       return r;
     } catch (error) {
       q.notify({
         type: 'negative',
-        message: 'Error al actualizar la bitácora',
+        message: 'Error al actualizar el estado de la bitácora',
       });
       throw error;
     }
   };
+  
 
   return {
     listarTodo,
     listarPorFechas,
     listarPorFicha,
+    listarBitacoraPorEstado,
     listarPorAprendiz,
     crearBitacora,
-    actualizar,
+    actualizarEstado,
   };
 });
