@@ -5,23 +5,39 @@
         <thead>
           <tr>
             <th>No.</th>
+          <th>Nombres y Apellidos</th>
+          <th>No. Documento</th>
+          <th>Planta</th>
+          <th>Contratista</th>
+          <th>Otro ¿Cuál?</th>
+          <th>Dependencia/Empresa</th>
+          <th>Correo Electrónico</th>
+          <th>Teléfono/Ext. SENA</th>
+          <th>Autoriza Grabación</th>
+          <th>Firma o Participación Virtual</th>
+
+            <!-- <th>No.</th>
             <th>Nombres y Apellidos</th>
             <th>No. Documento</th>
             <th>Dependencia/Empresa</th>
             <th>Correo Electrónico</th>
             <th>Teléfono</th>
-            <th>Firma</th>
+            <th>Firma</th> -->
           </tr>
         </thead>
         <tbody>
           <tr v-for="(row, index) in rows" :key="index">
             <td>{{ index + 1 }}</td>
-            <td>{{ row.nombre }}</td>
-            <td>{{ row.cedula }}</td>
-            <td>{{ row.dependencia }}</td>
-            <td>{{ row.correo }}</td>
-            <td>{{ row.telefono }}</td>
-            <td>{{ row.firma }}</td>
+          <td> <p>{{ row.nombre }}</p> </td>
+          <td> <p>{{ row.cedula }}</p> </td>
+          <td> <p>{{ row.planta }}</p> </td>
+          <td> <p>{{ row.contratista }}</p> </td>
+          <td> <p>{{ row.otro }}</p> </td>
+          <td> <p>{{ row.dependencia }}</p> </td>
+          <td> <p>{{ row.correo }}</p> </td>
+          <td> <p>{{ row.telefono }}</p> </td>
+          <td> <p>{{ row.autorizaGrabacion }}</p> </td>
+          <td> <p>{{ row.firma }}</p> </td>
           </tr>
         </tbody>
       </table>
@@ -44,31 +60,31 @@
   
   async function traer() {
     try {
-      // Solicitar bitácoras y aprendices
       const responseBitacoras = await useBitacora.listarBitacoraPorEstado("Asistió");
       const responseAprendices = await useAprendiz.listarAprendiz();
-  
-      // Validar que ambas respuestas existan y contengan datos
-      if (responseBitacoras?.data?.bitacoras && responseAprendices?.data) {
-        // Mapear los datos solo si están presentes
-        rows.value = responseBitacoras.data.bitacoras.map(bitacora => {
+
+      console.log('aprendices', responseAprendices);
+      console.log('Bitacorás "Asistió"', responseBitacoras);
+
+        rows.value = responseBitacoras.data.bitacora.map(bitacora => {
           const aprendiz = responseAprendices.data.find(
             aprendiz => aprendiz._id === bitacora.id_aprendiz
           );
           return {
-            nombre: aprendiz?.nombre || 'Desconocido',
-            cedula: aprendiz?.documento || 'No disponible',
-            dependencia: bitacora.dependencia || 'No disponible',
-            correo: aprendiz?.email || 'No disponible',
-            telefono: aprendiz?.telefono || 'No disponible',
-            firma: bitacora.firma || 'No registrada',
+        nombre: aprendiz.nombre || '',
+        cedula: aprendiz.documento || '',
+        planta: '',
+        contratista: '',
+        otro: '',
+        dependencia: '',
+        correo: aprendiz.email || '',
+        telefono: aprendiz.telefono || '',
+        autorizaGrabacion: '',
+        firma: '',
           };
         });
-      } else {
-        console.error("Datos no disponibles");
-      }
-    } catch (error) {
-      console.error("Error al traer los datos", error);
+      } catch (error) {
+      console.error(error);
     }
   }
   </script>

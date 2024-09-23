@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
+      <p><b>Fecha Actual:</b> {{ dia }} de {{ mesNombre }} del {{ anio }}</p>
       <div class="botones">
         <q-btn
           color="green-8"
@@ -13,7 +14,6 @@
           color="green-8"
           :disable="loading"
           class="crearPDF"
-          @click="generarPDF"
           to="/Tabla"
         >
           <font-awesome-icon icon="file-invoice" style="color: #ffffff;" />
@@ -107,14 +107,23 @@ import { useAprendizStore } from "../stores/aprendiz.js";
 onBeforeMount(() => {
   traer();
   cargarAprendices();
+  obtenerFechaActual();
 });
 
+let dia = ref(null)
+let mesNumero = ref(null)
+let mesNombre = ref(null)
+let anio = ref(null)
+
+
+const meses = ref(["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+"Julio", "Agosto", "Septiembre", "Octubre,", "Noviembre","Diciembre"
+])
 const prompt = ref(false);
 const loading = ref(false);
 const selectedAprendiz = ref(null);
 const fecha = ref(null);
 const aprendices = ref([]);
-const bitacoras = ([]);
 const dialogTitle = ref("");
 const estados = ["Asistió", "No Asistió", "Excusa", "Pendiente"];
 const q$ = useQuasar();
@@ -171,6 +180,26 @@ async function traer() {
   } finally {
     loading.value = false;
   }
+};
+
+function obtenerFechaActual() {
+  const fecha = new Date();
+
+  dia = fecha.getDate();
+  mesNumero = fecha.getMonth();
+  mesNombre.value = meses.value[fecha.getMonth()];
+  anio = fecha.getFullYear();
+
+  console.log(fecha);
+
+  return{
+    día: dia,
+    mesNumero: mesNumero,
+    mesNombre: mesNombre,
+    año: anio
+  }
+
+  
 }
 
 async function cargarAprendices() {
@@ -190,10 +219,7 @@ async function cargarAprendices() {
   } finally {
     loading.value = false;
   }
-}
-
-const aprendicesPorEstadoDeBitacora = async (val, update) => {}
-
+};
 
 const cambiarEstado = async (id, estado) => {
   try {

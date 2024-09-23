@@ -48,7 +48,6 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import { useQuasar } from "quasar";
 const drawer = ref(false);
 const isLoading = ref(false);
 </script>

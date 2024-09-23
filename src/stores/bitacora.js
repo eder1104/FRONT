@@ -88,6 +88,7 @@ export const useBitacoraStore = defineStore("bitacora", () => {
   };
 
   const crearBitacora = async (bitacoraData) => {
+    console.log(bitacoraData)
     try {
       const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
       q.notify({

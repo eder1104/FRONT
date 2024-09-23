@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div class="login">
       <q-form @submit.prevent="onSubmit" @reset="onReset" class="log">
-        <h5 id="tittle"><b>REPFORA</b></h5>
+        <h5 id="tittle"><b>ASISTENCIA</b></h5>
         <img
           src="../assets/Images/logoSena.png"
           alt="Logo Del SENA"
@@ -88,16 +88,20 @@ import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
+import { useBitacoraStore } from "../stores/bitacora";
+import { useAprendizStore } from "../stores/aprendiz";
 
 const showPassword = ref(false);
 const email = ref(null);
 const contrasena = ref(null);
 const documento = ref(null);
 const nombre = ref("");
-const role = ref(null); // Guardará el rol seleccionado (Administrador o Aprendiz)
-const roles = ref(["Administrador", "Aprendiz"]); // Opciones del select
+const role = ref("Aprendiz");
+const roles = ref(["Administrador", "Aprendiz"])
 const router = useRouter();
 const loading = ref(false);
+const useBitacora = useBitacoraStore();
+const useAprendiz = useAprendizStore();
 
 const onSubmit = async () => {
   loading.value = true;
@@ -117,7 +121,22 @@ const onSubmit = async () => {
       Notify.create({ type: "positive", message: "Inicio de sesión exitoso" });
       router.push("/Home");
     } else if (role.value === "Aprendiz") {
-      Notify.create({ type: "positive", message: "Inicio como Aprendiz" });
+      const aprendices = await useAprendiz.listarAprendiz();
+      console.log(aprendices)
+      const aprendiz = aprendices.data.find(aprendiz => aprendiz.documento === documento.value);
+      console.log(aprendiz)
+
+      if (aprendiz) {
+        const bitacoraData = {
+          id_aprendiz: aprendiz._id,
+          fecha: new Date().toISOString(),
+        };
+
+        await useBitacora.crearBitacora(bitacoraData);
+        Notify.create({ type: "positive", message: "Inicio como Aprendiz y bitácora creada" });
+      } else {
+        Notify.create({ type: "negative", message: "Documento no encontrado" });
+      }
     }
   } catch (error) {
     Notify.create({
@@ -129,12 +148,31 @@ const onSubmit = async () => {
   }
 };
 
+
 const onReset = () => {
   email.value = null;
   contrasena.value = null;
   documento.value = null;
   role.value = null;
 };
+
+// function obtenerFechaActual() {
+//   fechaActual = new Date();
+
+//   dia = fecha.getDate();
+//   mes = fecha.getMonth();
+//   anio = fecha.getFullYear();
+
+//   console.log(fecha);
+
+//   return{
+//     día: dia,
+//     mes: mes,
+//     año: anio
+//   }
+
+  
+// }
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
