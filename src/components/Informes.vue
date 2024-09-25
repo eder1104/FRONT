@@ -4,7 +4,7 @@
       <div class="filtros">
         <q-input v-model="fechaBusqueda" label="Seleccionar fecha" type="date" :disable="loading" />
         <q-input v-model="fichaBusqueda" label="ID Ficha" type="text" :disable="loading" />
-        <q-btn color="green-8" :disable="loading" @click="buscarBitacoras">Buscar</q-btn>
+        <q-btn color="green-8" :disable="loading" @click="buscarBitacoras()">Buscar</q-btn>
       </div>
 
       <q-table
@@ -73,21 +73,36 @@ async function buscarBitacoras() {
       return;
     }
 
-    const response = await useBitacora.listarPorFechaYFicha(fichaBusqueda.value, fechaBusqueda.value);
-    
+    // Formatear la fecha correctamente
+    const fechaFormatted = new Date(fechaBusqueda.value).toISOString().split('T')[0]; // Solo la fecha sin hora
+
+    console.log("Parámetros:", {
+      id_ficha: fichaBusqueda.value,
+      fecha: fechaFormatted
+    });
+
+    const response = await useBitacora.listarPorFechaYFicha(fichaBusqueda.value, fechaFormatted);
+
+    if (response.errors) {
+      throw new Error(response.errors[0].msg);
+    }
+
     rows.value = response.data.bitacoras.map((bitacora) => ({
       ...bitacora,
       fecha: formatFecha(bitacora.fecha),
     }));
   } catch (error) {
+    console.error('Detalles del error:', error);
     q$.notify({
       type: "negative",
-      message: "Error al buscar las bitácoras.",
+      message: error.message || "Error al buscar las bitácoras.",
     });
   } finally {
     loading.value = false;
   }
 }
+
+
 
 function formatFecha(fecha) {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };

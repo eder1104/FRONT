@@ -115,7 +115,7 @@ const router = useRouter();
 const isLoading = ref(false)
 const nombreUsuario = ref('')
 const emailUsuario = ref('')
-const useUsuario = useUsuarioStore
+const useUsuario = useUsuarioStore()
 
 
 function goToRoute(route) {
@@ -128,7 +128,7 @@ onMounted(() => {
   });
 
   const logout = async () => {
-    const response = await useUsuario.logout()
+    await useUsuario.logout()
   }
 </script>
 
@@ -185,7 +185,7 @@ onMounted(() => {
   font-size: 17px !important;
   width: 90% !important;
   margin-left: 4% !important;
-  top: 100px !important;
+  top: 50px !important;
   position: relative !important;
 }
 
