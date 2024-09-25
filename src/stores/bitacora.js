@@ -35,28 +35,12 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
-  const listarPorFechas = async () => {
+  const listarPorFechaYFicha = async (id_ficha) => {
     try {
-      const r = await axiosInstance.get(`/Bitacoras/listarporfechas`);
+      const r = await axiosInstance.get(`/Bitacoras/listarporfichayporfecha/${id_ficha}`);
       return r;
     } catch (error) {
-      q.notify({
-        type: 'negative',
-        message: 'Error al listar por fechas',
-      });
-      throw error;
-    }
-  };
-
-  const listarPorFicha = async (id_ficha) => {
-    try {
-      const r = await axiosInstance.get(`/Bitacoras/listarporficha/${id_ficha}`);
-      return r;
-    } catch (error) {
-      q.notify({
-        type: 'negative',
-        message: 'Error al listar por ficha',
-      });
+        console.log('Error al listar las bitacoras solicitadas');
       throw error;
     }
   };
@@ -91,10 +75,7 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     console.log(bitacoraData)
     try {
       const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
-      q.notify({
-        type: 'positive',
-        message: 'Bitácora creada con éxito',
-      });
+      console.log('Bitácora creada con éxito');
       return r;
     } catch (error) {
       q.notify({
@@ -125,8 +106,7 @@ export const useBitacoraStore = defineStore("bitacora", () => {
 
   return {
     listarTodo,
-    listarPorFechas,
-    listarPorFicha,
+    listarPorFechaYFicha,
     listarBitacoraPorEstado,
     listarPorAprendiz,
     crearBitacora,

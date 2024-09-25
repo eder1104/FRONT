@@ -37,6 +37,7 @@
               <br/><br/>
               <q-btn class="menuButton" to="/Home/Aprendiz" label="APRENDICES" />
               <br/><br/>
+              <q-btn class="menuButton" to="/Home/Informes" label="INFORMES" />
               <q-btn class="menuButtonSession" to="/" label="Cerrar sesión" @click="logout()"/>
 
             </q-list>

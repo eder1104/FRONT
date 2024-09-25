@@ -133,7 +133,7 @@ const onSubmit = async () => {
         };
 
         await useBitacora.crearBitacora(bitacoraData);
-        Notify.create({ type: "positive", message: "Inicio como Aprendiz y bitácora creada" });
+        Notify.create({ type: "positive", message: "Asistencia registrada con exito" });
       } else {
         Notify.create({ type: "negative", message: "Documento no encontrado" });
       }

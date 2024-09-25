@@ -91,7 +91,6 @@
                 <q-btn 
                 flat 
                 label="Cerrar" 
-                :loading="isLoading"
                 @click="prompt = false" 
                 />
                 <q-btn 

@@ -87,12 +87,6 @@
             </q-form>
           </q-td>
         </template>
-        <template v-slot:body-cell-estado1="props">
-          <q-td :props="props">
-            <p style="color: green" v-if="props.row.estado == 1">Activo</p>
-            <p style="color: red" v-else>Inactivo</p>
-          </q-td>
-        </template>
       </q-table>
     </q-layout>
   </div>
@@ -125,8 +119,8 @@ const selectedAprendiz = ref(null);
 const fecha = ref(null);
 const aprendices = ref([]);
 const dialogTitle = ref("");
-const estados = ["Asistió", "No Asistió", "Excusa", "Pendiente"];
 const q$ = useQuasar();
+const estados = ref(["Asistió", "No Asistió", "Pendiente", "Excusa"])
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
 const rows = ref([]);

@@ -1,7 +1,6 @@
 <template>
-  <router-view>
+    <div class="q-pa-md">
   <q-layout view="lHh Lpr lff">
-
     <q-page-container>
       <q-btn
         color="green-8"
@@ -54,7 +53,6 @@
         </template>
       </q-table>
 
-      <!-- Dialog for creating/editing Aprendiz -->
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -123,7 +121,8 @@
         </q-card>
       </q-dialog>
     </q-page-container>
-  </q-layout></router-view>
+  </q-layout>
+  </div>
 </template>
 
 <script setup>
