@@ -3,6 +3,7 @@
     <q-layout view="lHh Lpr lff">
       <div class="filtros">
         <q-input 
+          filled
           v-model="fechaBusqueda" 
           label="Seleccionar fecha" 
           type="date" 
@@ -10,19 +11,22 @@
         />
 
         <q-input 
+          filled
           v-model="fichaBusqueda" 
           label="ID Ficha" 
           type="text" 
           :disable="loading" 
         />
 
+      
+<div id="divBtnBuscar">
         <q-btn 
-        color="green-8" 
+        class="colorCorporativo" 
         :disable="loading" 
         @click="buscarBitacoras()">Buscar
         </q-btn>
-      </div>
 
+</div></div>
       <q-table
         title="INFORMES"
         :rows="rows"
@@ -129,12 +133,18 @@ function formatFecha(fecha) {
 <style>
 .filtros {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 5%;
+  justify-content: center;
 }
 
-#btnBuscar{
-  position: relative;
+.filtro{
+padding-inline: 10% !important;
+}
+
+#divBtnBuscar{
+  align-content: center !important;
+  justify-content: center !important;
+  align-items: center !important;
   
 }
 </style>

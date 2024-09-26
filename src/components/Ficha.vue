@@ -3,7 +3,7 @@
     <q-layout view="lHh Lpr lff">
 
       <q-btn class="colorCorporativo" @click="dialogo('crear')" label="Crear Ficha" />
-
+<br><br>
       <q-table
         class="posicion"
         title="FICHAS"
@@ -15,7 +15,7 @@
         <template v-slot:body-cell-opciones="props">
           <q-td :props="props">
             <q-btn
-              class="colorCorporativo"
+              class="colorCorporativo editar"
               @click="dialogo('editar', props.row)"
               :loading="loadingButtons[props.row._id]?.editar || false"
               >
@@ -86,6 +86,7 @@
                   <font-awesome-icon icon="spell-check" />
                 </template>              
               </q-input>
+              
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
@@ -101,11 +102,11 @@
             <q-btn 
             flat 
             class="btnGuardar"
-            :loading="loadingButtons"
+            :loading="loadingGeneral"
             @click="validar()"
             >
                 <font-awesome-icon icon="fa-solid fa-floppy-disk" style="margin-right: 5px;" />                
-                Guardar Administrador
+                Guardar Ficha
               </q-btn>
           </q-card-actions>
         </q-card>
@@ -126,7 +127,7 @@ const inputCodigoFicha = ref("");
 const inputNombreFicha = ref("");
 const rows = ref([]);
 const loadingGeneral = ref(false); 
-const loadingButtons = ref(false); 
+const loadingButtons = ref({}); 
 
 let dialogTitle = ref("");
 let editando = ref(false);
@@ -190,6 +191,7 @@ async function desactivar(id) {
 }
 
 const validar = async () => {
+
   loadingGeneral.value = true;
   if (!inputCodigoFicha.value || !inputNombreFicha.value) {
     q$.notify({

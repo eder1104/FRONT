@@ -57,7 +57,7 @@
               />
               Cerrar
             </q-btn>
-            <q-btn flat class="btnGuardar" @click="validar" :disable="loading">
+            <q-btn flat class="btnGuardar" @click="validar" :loading="loading" :disable="loading">
               <font-awesome-icon
                 icon="fa-solid fa-floppy-disk"
                 style="margin-right: 5px"

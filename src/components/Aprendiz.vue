@@ -2,7 +2,8 @@
   <router-view>
     <q-layout view="lHh Lpr lff">
       <q-page-container>
-        <q-btn color="green-8" @click="abrirDialogo()" label="Crear Aprendiz" />
+        <q-btn class="colorCorporativo" @click="abrirDialogo()" label="Crear Aprendiz" />
+        <br><br>
         <q-table
           title="APRENDICES"
           :rows="rows"
@@ -16,7 +17,7 @@
           <template v-slot:body-cell-opciones="props">
             <q-td :props="props">
               <q-btn
-                color="green-8"
+                class="colorCorporativo editar"
                 @click="abrirDialogo(props.row)"
                 :loading="loadingButtons[props.row._id]?.editar || false"
               >
@@ -301,8 +302,8 @@ async function guardar() {
     if (editando.value) {
       const respuesta = await useAprendiz.actualizarAprendiz(
         aprendizId.value,
-        inputNombreAprendiz.value.trim(),
         inputDocumentoAprendiz.value.trim(),
+        inputNombreAprendiz.value.trim(),
         inputTelefonoAprendiz.value.trim(),
         inputEmailAprendiz.value.trim(),
         fichaId
@@ -313,10 +314,7 @@ async function guardar() {
           message: "Aprendiz actualizado correctamente.",
         });
       } else {
-        $q.notify({
-          type: "negative",
-          message: "Error al actualizar el aprendiz.",
-        });
+
       }
     } else {
       const respuesta = await useAprendiz.crearAprendiz(
@@ -336,19 +334,13 @@ async function guardar() {
         traer();
         prompt.value = false;
       } else {
-        $q.notify({
-          type: "negative",
-          message: "Error al crear el aprendiz.",
-        });
+
       }
     }
     traer();
     prompt.value = false;
   } catch (error) {
-    $q.notify({
-      type: "negative",
-      message: "Error al procesar la solicitud.",
-    });
+    console.log(error)
     console.error("Error en guardar:", error);
   } finally {
     isLoading.value = false;

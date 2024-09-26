@@ -29,13 +29,13 @@
             <q-list padding>
               <q-btn class="menuButton colorCorporativo" to="/Home" label="HOME" />
               <br/><br/>
-              <q-btn class="menuButton colorCorporativo" to="/Home/Ficha" label="FICHAS" />
-              <br/><br/>
               <q-btn class="menuButton colorCorporativo" to="/Home/Usuario" label="ADMINISTRADORES" />
               <br/><br/>
-              <q-btn class="menuButton colorCorporativo" to="/Home/Bitacora" label="BITACORAS" />
-              <br/><br/>
               <q-btn class="menuButton colorCorporativo" to="/Home/Aprendiz" label="APRENDICES" />
+              <br/><br/>
+              <q-btn class="menuButton colorCorporativo" to="/Home/Ficha" label="FICHAS" />
+              <br/><br/>
+              <q-btn class="menuButton colorCorporativo" to="/Home/Bitacora" label="BITACORAS" />
               <br/><br/>
               <q-btn class="menuButton colorCorporativo" to="/Home/Informes" label="INFORMES" />
               <q-btn class="menuButtonSession" to="/" label="Cerrar sesión" @click="logout()"/>
@@ -64,37 +64,37 @@
 
           <div class="q-gutter-md grid" v-if="$route.path === '/Home'">
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Ficha')">
-              <div class="fondo">
-                <q-img src="../assets/Images/Logo-Fichas.png" />
+              <div class="colorCorporativo flex-container">
+                <q-img src="../assets/Images/Logo-Fichas.png" class="flex-img" />
               </div>
-              <q-card-section class="width">
+              <q-card-section class="flex-content">
                 <div class="text-h6 q-mt-sm q-mb-xs">FICHAS</div>
               </q-card-section>
             </q-card>
 
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Usuario')">
-              <div class="fondo">
-                <q-img src="../assets/Images/Logo-Administrador.png" />
+              <div class="colorCorporativo flex-container">
+                <q-img src="../assets/Images/Logo-Administrador.png" class="flex-img" />
               </div>
-              <q-card-section>
+              <q-card-section class="flex-content">
                 <div class="text-h6 q-mt-sm q-mb-xs">ADMINISTRADOR</div>
               </q-card-section>
             </q-card>
 
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Bitacora')">
-              <div class="fondo">
-                <q-img src="../assets/Images/Logo-Bitacoras.png" />
+              <div class="colorCorporativo flex-container">
+                <q-img src="../assets/Images/Logo-Bitacoras.png" class="flex-img" />
               </div>
-              <q-card-section>
+              <q-card-section class="flex-content">
                 <div class="text-h6 q-mt-sm q-mb-xs">BITACORAS</div>
               </q-card-section>
             </q-card>
 
             <q-card class="my-card" flat bordered @click="goToRoute('/Home/Aprendiz')">
-              <div class="fondo">
-                <q-img src="../assets/Images/Logo-Aprendices.png" />
+              <div class="colorCorporativo flex-container">
+                <q-img src="../assets/Images/Logo-Aprendices.png" class="flex-img" />
               </div>
-              <q-card-section>
+              <q-card-section class="flex-content">
                 <div class="text-h6 q-mt-sm q-mb-xs">APRENDICES</div>
               </q-card-section>
             </q-card>
@@ -140,10 +140,6 @@ onMounted(() => {
 
 .q-gutter-md {
   padding-inline-start: 10% !important;
-}
-
-.fondo {
-  background-color: #2e7d32;
 }
 
 .absolute-top{
@@ -224,7 +220,43 @@ padding: 10px;
 }
 
 .colorCorporativo{
-  background-color: #2e7d32 !important;
+  background-color: #238327 !important;
   color: white !important;
 }
+
+.desactivar {
+  background-color: red !important;
+  border-radius: 13px !important;
+  margin-left: 2% !important;
+}
+
+.activar{
+  background-color: rgb(10, 190, 10) !important;
+  border-radius: 13px !important;
+  margin-left: 2% !important;
+}
+
+.editar{
+  border-radius: 13px !important;
+  margin-right: 2% !important;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.flex-img {
+  max-width: 80%;
+  height: auto;
+}
+
+.flex-content {
+  text-align: center;
+  margin-top: 8px; 
+}
+
 </style>

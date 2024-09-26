@@ -21,7 +21,7 @@
           >
             <template v-slot:body-cell-opciones="props">
               <q-td :props="props">
-                <q-btn class="colorCorporativo" @click="dialogo('editar', props.row)"
+                <q-btn class="colorCorporativo editar" @click="dialogo('editar', props.row)"
                 :loading="loadingButtons[props.row._id]?.editar || false"
                 >
                   <font-awesome-icon icon="pen-to-square" />
@@ -277,13 +277,3 @@ const columns = ref([
   { name: "opciones", label: "Opciones", align: "center", sortable: true },
 ]);
 </script>
-
-<style>
-.desactivar {
-  background-color: red !important;
-}
-
-.activar{
-  background-color: rgb(10, 190, 10) !important;
-}
-</style>

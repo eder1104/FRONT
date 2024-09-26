@@ -59,10 +59,8 @@ export const useAprendizStore = defineStore("aprendiz", () => {
       });
       return r;
     } catch (error) {
-      q.notify({
-        type: 'negative',
-        message: 'Error al crear aprendiz',
-      });
+console.log(error);
+;
       throw error;
     }
   };
@@ -70,7 +68,7 @@ export const useAprendizStore = defineStore("aprendiz", () => {
   const actualizarAprendiz = async (id, documento, nombre, telefono, email, id_ficha) => {
     try {
       const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, {
-        documento, nombre, telefono, email, id_ficha
+        nombre, documento, telefono, email, id_ficha
       });
       q.notify({
         type: 'positive',
