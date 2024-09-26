@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
-      <q-header elevated class="bg-green text-white">
+      <q-header elevated class="colorCorporativo text-white">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title>REPFORA</q-toolbar-title>
@@ -27,17 +27,17 @@
             "
           >
             <q-list padding>
-              <q-btn class="menuButton" to="/Home" label="HOME" />
+              <q-btn class="menuButton colorCorporativo" to="/Home" label="HOME" />
               <br/><br/>
-              <q-btn class="menuButton" to="/Home/Ficha" label="FICHAS" />
+              <q-btn class="menuButton colorCorporativo" to="/Home/Ficha" label="FICHAS" />
               <br/><br/>
-              <q-btn class="menuButton" to="/Home/Usuario" label="ADMINISTRADORES" />
+              <q-btn class="menuButton colorCorporativo" to="/Home/Usuario" label="ADMINISTRADORES" />
               <br/><br/>
-              <q-btn class="menuButton" to="/Home/Bitacora" label="BITACORAS" />
+              <q-btn class="menuButton colorCorporativo" to="/Home/Bitacora" label="BITACORAS" />
               <br/><br/>
-              <q-btn class="menuButton" to="/Home/Aprendiz" label="APRENDICES" />
+              <q-btn class="menuButton colorCorporativo" to="/Home/Aprendiz" label="APRENDICES" />
               <br/><br/>
-              <q-btn class="menuButton" to="/Home/Informes" label="INFORMES" />
+              <q-btn class="menuButton colorCorporativo" to="/Home/Informes" label="INFORMES" />
               <q-btn class="menuButtonSession" to="/" label="Cerrar sesión" @click="logout()"/>
 
             </q-list>
@@ -128,7 +128,7 @@ onMounted(() => {
   });
 
   const logout = async () => {
-    await useUsuario.logout()
+    const r  = useUsuario.logout()
   }
 </script>
 
@@ -172,7 +172,6 @@ onMounted(() => {
 }
 
 .menuButton {
-  background-color: #2e7d32 !important;
   color: white !important;
   font-size: 17px !important;
   width: 90% !important;
@@ -192,5 +191,40 @@ onMounted(() => {
 .q-table__title{
   font-size: 30px !important;
   font-weight: bold !important;
+}
+
+.btnCerrar {
+  background-color: #ff0404cd !important;
+  font-weight: bold !important;
+  color: white !important;
+}
+
+.btnGuardar {
+  background-color: #2e7d32 !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.q-card .tituloCuadroDeDialogo {
+  background-color: #2e7d32 ;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: white;
+  padding: 17px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.q-select{
+  padding: 10px;
+
+}
+
+.q-input {
+padding: 10px;
+}
+
+.colorCorporativo{
+  background-color: #2e7d32 !important;
+  color: white !important;
 }
 </style>

@@ -5,11 +5,15 @@ import { Notify } from 'quasar'
 import { router } from "./routes/routes.js"
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faPenToSquare, faBan, faCheck, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faBan, faCheck, faFileInvoice, faSpellCheck, 
+         faAddressCard, faPhone, faEnvelope, faUsersLine, faLock, 
+         faHashtag, faUserGraduate, faCalendarDays, faFloppyDisk, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // Añadir el ícono a la librería de Font Awesome
-library.add(faPenToSquare, faBan, faCheck, faFileInvoice)
+library.add(faPenToSquare, faBan, faCheck, faFileInvoice, faSpellCheck, 
+  faAddressCard, faPhone, faEnvelope, faUsersLine, faLock, faHashtag, 
+  faUserGraduate, faCalendarDays,faFloppyDisk, faCircleXmark)
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'

@@ -8,8 +8,8 @@ export const useBitacoraStore = defineStore("bitacora", () => {
   const q = useQuasar();
   
   const axiosInstance = axios.create({
-    baseURL: 'https://api-asistencia-sena.onrender.com/api',
-    // baseURL: 'http://localhost:5001/api',
+    // baseURL: 'https://api-asistencia-sena.onrender.com/api',
+    baseURL: 'http://localhost:5001/api',
   });
 
   // Interceptor para agregar el token en cada solicitud
@@ -38,10 +38,8 @@ export const useBitacoraStore = defineStore("bitacora", () => {
 const listarPorFechaYFicha = async (id_ficha, fecha) => {
   try {
     const response = await axiosInstance.get(`/Bitacoras/listarporfichayporfecha`, {
-      params: {
         id_ficha,
         fecha
-      }
     });
     return response;
   } catch (error) {
@@ -82,7 +80,10 @@ const listarPorFechaYFicha = async (id_ficha, fecha) => {
     console.log(bitacoraData)
     try {
       const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
-      console.log('Bitácora creada con éxito');
+      q.notify({
+        type: 'positive',
+        message: 'Bitácora creada con éxito',
+      });
       return r;
     } catch (error) {
       q.notify({

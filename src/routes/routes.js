@@ -5,7 +5,6 @@ import Bitacora from "../components/Bitacora.vue"
 import Ficha from "../components/Ficha.vue"
 import Aprendiz from "../components/Aprendiz.vue"
 import Recuperacion from "../components/Recuperacion.vue"
-import ListaAprendiz from "../components/ListaAprendiz.vue"
 import Informes from "../components/Informes.vue"
 import TablaAsistencia from "../components/TablaAsistencia.vue"
 
@@ -22,7 +21,6 @@ const routes = [
     {path: "Bitacora", component: Bitacora},
     {path: "Ficha", component: Ficha},
     {path: "Aprendiz", component: Aprendiz},
-    {path: "Listado", component: ListaAprendiz},
     {path: "Informes", component: Informes},
   ]
 }

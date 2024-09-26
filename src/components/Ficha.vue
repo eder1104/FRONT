@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
 
-      <q-btn color="green-8" @click="dialogo('crear')" label="Crear Ficha" />
+      <q-btn class="colorCorporativo" @click="dialogo('crear')" label="Crear Ficha" />
 
       <q-table
         class="posicion"
@@ -15,7 +15,7 @@
         <template v-slot:body-cell-opciones="props">
           <q-td :props="props">
             <q-btn
-              color="green-8"
+              class="colorCorporativo"
               @click="dialogo('editar', props.row)"
               :loading="loadingButtons[props.row._id]?.editar || false"
               >
@@ -53,43 +53,60 @@
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">{{ dialogTitle }}</div>
+            <div class="text-h5 tituloCuadroDeDialogo">{{ dialogTitle }}</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <p>Codigo de ficha</p>
             <q-input
-              dense
+              filled
+              label="Codigo de la Ficha"
+              label-class="custom-label"
               v-model="inputCodigoFicha"
               :disable="loadingGeneral"
               autofocus
               @keydown="preventNonNumeric"
               @input="formatInputCodigoFicha"
               @keyup.enter="prompt = false"
-            />
+              >
+              <template v-slot:prepend>
+                <font-awesome-icon icon="hashtag" />                
+              </template>  
+            </q-input>
 
-            <p>Nombre de Ficha</p>
             <q-input
-              dense
+              filled
+              label="Nombre de la Ficha"
+              label-class="custom-label"
               :disable="loadingGeneral"
               v-model="inputNombreFicha"
               autofocus
               @keyup.enter="prompt = false"
-            />
+              >
+              <template v-slot:prepend>
+                  <font-awesome-icon icon="spell-check" />
+                </template>              
+              </q-input>
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
             <q-btn 
-            flat label="Cerrar" 
+            flat  
+            class="btnCerrar"
             v-close-popup 
-            :loading="loadingButtons"
-            @click="validar()" />
+            >
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="margin-right: 5px;"/>                  
+                Cerrar              
+                </q-btn>
 
             <q-btn 
             flat 
-            label="Guardar Ficha" 
+            class="btnGuardar"
             :loading="loadingButtons"
-            @click="validar()" />
+            @click="validar()"
+            >
+                <font-awesome-icon icon="fa-solid fa-floppy-disk" style="margin-right: 5px;" />                
+                Guardar Administrador
+              </q-btn>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -109,7 +126,7 @@ const inputCodigoFicha = ref("");
 const inputNombreFicha = ref("");
 const rows = ref([]);
 const loadingGeneral = ref(false); 
-const loadingButtons = ref({}); 
+const loadingButtons = ref(false); 
 
 let dialogTitle = ref("");
 let editando = ref(false);

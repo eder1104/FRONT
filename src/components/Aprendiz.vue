@@ -55,62 +55,100 @@
         <q-dialog v-model="prompt" persistent class="box">
           <q-card style="min-width: 350px">
             <q-card-section>
-              <div class="text-h6">
-                {{ editando ? "Editar Aprendiz" : "Crear Aprendiz" }}
+              <div class="text-h5 tituloCuadroDeDialogo">
+                {{ editando ? "EDITAR APRENDIZ" : "CREAR APRENDIZ" }}
               </div>
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              <p>Nombre del Aprendiz</p>
+
               <q-input
-                dense
+                filled
+                label="Nombre del Aprendiz"
+                label-class="custom-label"
                 v-model="inputNombreAprendiz"
                 :disable="isLoading"
                 autofocus
                 @keyup.enter="guardar()"
-              />
-              <p>Documento del Aprendiz</p>
+              >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="spell-check" />
+                </template>              
+              </q-input>
+
               <q-input
-                dense
+                filled
+                label="Documento del Aprendiz"
+                label-class="custom-label"
                 v-model="inputDocumentoAprendiz"
                 :disable="isLoading"
                 @keyup.enter="guardar()"
-              />
-              <p>Teléfono del Aprendiz</p>
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="address-card" />                </template>              
+              </q-input>
+
               <q-input
-                dense
+                filled
+                label="Teléfono del Aprendiz"
+                label-class="custom-label"
                 v-model="inputTelefonoAprendiz"
                 :disable="isLoading"
                 @keyup.enter="guardar()"
-              />
-              <p>Email del Aprendiz</p>
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="phone" />                
+                </template>              
+              </q-input>
+
               <q-input
-                dense
+                filled
+                label="Email del Aprendiz"
+                label-class="custom-label"
                 v-model="inputEmailAprendiz"
                 :disable="isLoading"
                 @keyup.enter="guardar()"
-              />
-              <p>Ficha del aprendiz</p>
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="envelope" />                
+                </template>              
+              </q-input>
+              
               <q-select
-                dense
+                filled
                 v-model="selectedFicha"
                 :options="fichas"
                 :disable="isLoading"
                 option-label="codigo"
                 option-value="_id"
                 label="Seleccionar Ficha"
-              />
+                label-class="custom-label"
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="users-line" />                
+                </template>              
+              </q-select>
             </q-card-section>
 
             <q-card-actions align="right" class="text-primary1">
-              <q-btn flat label="Cerrar" :loading="isLoading" v-close-popup />
+              <q-btn
+              class="btnCerrar"
+                flat
+                v-close-popup 
+                >
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="margin-right: 5px;"/>                  
+                Cerrar              
+                </q-btn>
 
               <q-btn
+                class="btnGuardar"
                 flat
-                label="Guardar"
                 :loading="isLoading"
                 @click="guardar()"
-              />
+                >
+                <font-awesome-icon icon="fa-solid fa-floppy-disk" style="margin-right: 5px;" />                
+                Guardar Aprendiz
+              </q-btn>
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -357,7 +395,7 @@ async function desactivar(id) {
 }
 </script>
 
-<style>
+<style scooped>
 .width {
   width: 3%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -372,4 +410,9 @@ async function desactivar(id) {
 .box {
   z-index: 9999;
 }
+.q-card__section{
+  padding: 0px !important;
+
+}
+
 </style>

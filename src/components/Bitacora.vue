@@ -4,59 +4,66 @@
       <p><b>Fecha Actual:</b> {{ dia }} de {{ mesNombre }} del {{ anio }}</p>
       <div class="botones">
         <q-btn
-          color="green-8"
           :disable="loading"
           @click="dialogo('crear')"
           label="Crear Bitacora"
-          class="crear"
+          class="crear colorCorporativo"
         />
-        <q-btn
-          color="green-8"
-          :disable="loading"
-          class="crearPDF"
-          to="/Tabla"
-        >
-          <font-awesome-icon icon="file-invoice" style="color: #ffffff;" />
+        <q-btn :disable="loading" class="crearPDF colorCorporativo" to="/Tabla">
+          <font-awesome-icon icon="file-invoice" style="color: #ffffff" />
         </q-btn>
       </div>
       <br />
-      <q-dialog v-model="prompt" persistent :style="{ zIndex: 1 }">
+      <q-dialog v-model="prompt" persistent :style="{ zIndex: 1000 }">
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">{{ dialogTitle }}</div>
+            <div class="text-h5 tituloCuadroDeDialogo">{{ dialogTitle }}</div>
           </q-card-section>
 
-          <q-card-section class="q-pt-none">
-            <p>ID de aprendiz</p>
-            <q-select
-              dense
-              v-model="selectedAprendiz"
-              :options="aprendices"
-              use-input
-              fill-input
-              option-label="documento"
-              option-value="_id"
-              label="Seleccionar Aprendiz"
-              autofocus
-              :disable="loading"
-            />
+          <q-select
+            filled
+            v-model="selectedAprendiz"
+            :options="aprendices"
+            use-input
+            fill-input
+            option-label="documento"
+            option-value="_id"
+            label="Seleccionar Aprendiz"
+            autofocus
+            :disable="loading"
+          >
+            <template v-slot:prepend>
+              <font-awesome-icon icon="user-graduate" />
+            </template>
+          </q-select>
 
-            <q-input
-              v-model="fecha"
-              label="Seleccionar fecha"
-              type="date"
-              :disable="loading"
-            />
-          </q-card-section>
+          <q-input
+            filled
+            v-model="fecha"
+            label="Seleccionar fecha"
+            type="date"
+            :disable="loading"
+          >
+            <template v-slot:prepend>
+              <font-awesome-icon icon="spell-check" />
+            </template>
+          </q-input>
 
           <q-card-actions align="right" class="text-primary1">
-            <q-btn flat label="Cerrar" v-close-popup :disable="loading" />
-            <q-btn
-              flat
-              label="Guardar Bitacora"
-              @click="validar"
-              :disable="loading"
-            />
+            <q-btn flat v-close-popup class="btnCerrar" :disable="loading">
+              <font-awesome-icon
+                icon="fa-solid fa-circle-xmark"
+                style="margin-right: 5px"
+              />
+              Cerrar
+            </q-btn>
+            <q-btn flat class="btnGuardar" @click="validar" :disable="loading">
+              <font-awesome-icon
+                icon="fa-solid fa-floppy-disk"
+                style="margin-right: 5px"
+              />
+              Guardar Bitacora
+            </q-btn>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -82,7 +89,9 @@
                 label="Estado"
                 filled
                 :disable="loading"
-                @update:model-value="(valor) => cambiarEstado(props.row._id, valor)"
+                @update:model-value="
+                  (valor) => cambiarEstado(props.row._id, valor)
+                "
               />
             </q-form>
           </q-td>
@@ -104,15 +113,25 @@ onBeforeMount(() => {
   obtenerFechaActual();
 });
 
-let dia = ref(null)
-let mesNumero = ref(null)
-let mesNombre = ref(null)
-let anio = ref(null)
+let dia = ref(null);
+let mesNumero = ref(null);
+let mesNombre = ref(null);
+let anio = ref(null);
 
-
-const meses = ref(["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-"Julio", "Agosto", "Septiembre", "Octubre,", "Noviembre","Diciembre"
-])
+const meses = ref([
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre,",
+  "Noviembre",
+  "Diciembre",
+]);
 const prompt = ref(false);
 const loading = ref(false);
 const selectedAprendiz = ref(null);
@@ -120,7 +139,7 @@ const fecha = ref(null);
 const aprendices = ref([]);
 const dialogTitle = ref("");
 const q$ = useQuasar();
-const estados = ref(["Asistió", "No Asistió", "Pendiente", "Excusa"])
+const estados = ref(["Asistió", "No Asistió", "Pendiente", "Excusa"]);
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
 const rows = ref([]);
@@ -163,18 +182,20 @@ async function traer() {
     let response2 = await useAprendiz.listarAprendiz();
 
     rows.value = response.data.bitacoras.map((bitacora) => {
-      let aprendiz = response2.data.find((aprendiz) => aprendiz?._id === bitacora?.id_aprendiz);
+      let aprendiz = response2.data.find(
+        (aprendiz) => aprendiz?._id === bitacora?.id_aprendiz
+      );
       return {
         ...bitacora,
-        cedulaAprendiz: aprendiz?.documento || 'No disponible',
-        nombre: aprendiz?.nombre || 'Desconocido',
-        fecha: formatFecha(bitacora?.fecha || new Date())
+        cedulaAprendiz: aprendiz?.documento || "No disponible",
+        nombre: aprendiz?.nombre || "Desconocido",
+        fecha: formatFecha(bitacora?.fecha || new Date()),
       };
     });
   } finally {
     loading.value = false;
   }
-};
+}
 
 function obtenerFechaActual() {
   const fecha = new Date();
@@ -186,14 +207,12 @@ function obtenerFechaActual() {
 
   console.log(fecha);
 
-  return{
+  return {
     día: dia,
     mesNumero: mesNumero,
     mesNombre: mesNombre,
-    año: anio
-  }
-
-  
+    año: anio,
+  };
 }
 
 async function cargarAprendices() {
@@ -213,7 +232,7 @@ async function cargarAprendices() {
   } finally {
     loading.value = false;
   }
-};
+}
 
 const cambiarEstado = async (id, estado) => {
   try {
@@ -239,9 +258,10 @@ const dialogo = (accion, bitacora = null) => {
     fecha.value = null;
   } else if (accion === "editar" && bitacora) {
     dialogTitle.value = "Editar Bitácora";
-    selectedAprendiz.value = aprendices.value.find(
-      (aprendiz) => aprendiz._id === bitacora.aprendizId
-    ) || null;
+    selectedAprendiz.value =
+      aprendices.value.find(
+        (aprendiz) => aprendiz._id === bitacora.aprendizId
+      ) || null;
     fecha.value = bitacora.fecha || null;
   }
   prompt.value = true;
@@ -287,15 +307,11 @@ const validar = async () => {
 </script>
 
 <style>
-
-
 .botones {
   display: flex !important;
   justify-content: space-between !important;
   align-items: end !important;
 }
-
-
 
 .q-table__container div {
   display: flex;
@@ -317,6 +333,7 @@ const validar = async () => {
 .q-table__top {
   padding: 3px !important;
 }
+
 th.text-center {
   font-size: 15px !important;
   font-weight: bold !important;
@@ -327,4 +344,3 @@ td {
   padding: 2% !important;
 }
 </style>
-

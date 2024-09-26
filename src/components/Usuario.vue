@@ -3,7 +3,7 @@
     <q-layout view="lHh Lpr lff">
         <div>
           <q-btn
-            color="green-8"
+            class="colorCorporativo"
             @click="dialogo('crear')"
             label="Crear Administrador"
           />
@@ -21,7 +21,7 @@
           >
             <template v-slot:body-cell-opciones="props">
               <q-td :props="props">
-                <q-btn color="green-8" @click="dialogo('editar', props.row)"
+                <q-btn class="colorCorporativo" @click="dialogo('editar', props.row)"
                 :loading="loadingButtons[props.row._id]?.editar || false"
                 >
                   <font-awesome-icon icon="pen-to-square" />
@@ -58,46 +58,78 @@
           <q-dialog v-model="prompt" persistent>
             <q-card style="min-width: 350px">
               <q-card-section>
-                <div class="text-h6">{{ dialogTitle }}</div>
+                <div class="text-h5 tituloCuadroDeDialogo">{{ dialogTitle }}</div>
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                <p>Nombre del Usuario</p>
                 <q-input 
-                dense 
+                filled
+                label="Nombre del Usuario"
+                label-class="custom-label"
                 v-model="inputNombreAdministrador"
                 :disable="isLoading"
                 autofocus 
-                />
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="spell-check" />
+                </template>              
+              </q-input>
 
-                <p>Email</p>
                 <q-input 
-                dense 
+                filled
+                label="Email"
+                label-class="custom-label" 
                 v-model="inputEmailAdministrador"
                 :disable="isLoading" 
-                />
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="envelope" />                
+                </template>              
+              </q-input>
 
-                <p v-show="!editando">Contraseña</p>
                 <q-input
-                  dense
-                  v-model="inputContrasenaAdministrador"
-                  v-show="!editando"
-                  :disable="isLoading"
-                  type="password"
-                />
+            class="inputLogin"
+            filled
+            :type="showPassword ? 'text' : 'password'"
+            v-model="inputContrasenaAdministrador"
+            label="Ingrese su contraseña"
+            lazy-rules
+            @paste.prevent
+            :rules="[(val) => !!val || 'La contraseña es requerida']"
+          >
+          <template v-slot:prepend>
+                  <font-awesome-icon icon="lock" />                
+                </template>    
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility' : 'visibility_off'"
+                class="cursor-pointer"
+                @click="togglePasswordVisibility"
+              />
+            </template>
+          </q-input>
               </q-card-section>
 
               <q-card-actions align="right" class="text-primary">
                 <q-btn 
+                class="btnCerrar"
                 flat 
-                label="Cerrar" 
                 @click="prompt = false" 
-                />
+                >
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="margin-right: 5px;"/>                  
+                Cerrar              
+                </q-btn>
+
+
                 <q-btn 
                 flat 
-                label="Guardar Administrador" 
+                class="btnGuardar"
                 :loading="isLoading"
-                @click="validar()" />
+                @click="validar()" 
+                >
+                <font-awesome-icon icon="fa-solid fa-floppy-disk" style="margin-right: 5px;" />                
+                Guardar Administrador
+              </q-btn>
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -113,6 +145,7 @@ import { useUsuarioStore } from "../stores/usuarios.js";
 
 const rows = ref([]);
 const prompt = ref(false);
+const showPassword = ref(false);
 const q$ = useQuasar();
 const dialogTitle = ref("");
 const editando = ref(false);
@@ -212,6 +245,10 @@ const dialogo = (accion, administrador = null) => {
     editando.value = true;
   }
   prompt.value = true;
+};
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
 };
 
 const columns = ref([

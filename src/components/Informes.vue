@@ -2,9 +2,25 @@
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
       <div class="filtros">
-        <q-input v-model="fechaBusqueda" label="Seleccionar fecha" type="date" :disable="loading" />
-        <q-input v-model="fichaBusqueda" label="ID Ficha" type="text" :disable="loading" />
-        <q-btn color="green-8" :disable="loading" @click="buscarBitacoras()">Buscar</q-btn>
+        <q-input 
+          v-model="fechaBusqueda" 
+          label="Seleccionar fecha" 
+          type="date" 
+          :disable="loading" 
+        />
+
+        <q-input 
+          v-model="fichaBusqueda" 
+          label="ID Ficha" 
+          type="text" 
+          :disable="loading" 
+        />
+
+        <q-btn 
+        color="green-8" 
+        :disable="loading" 
+        @click="buscarBitacoras()">Buscar
+        </q-btn>
       </div>
 
       <q-table
@@ -80,8 +96,8 @@ async function buscarBitacoras() {
       id_ficha: fichaBusqueda.value,
       fecha: fechaFormatted
     });
-
-    const response = await useBitacora.listarPorFechaYFicha(fichaBusqueda.value, fechaFormatted);
+    {fichaBusqueda.value, fechaFormatted}
+    const response = await useBitacora.listarPorFechaYFicha();
 
     if (response.errors) {
       throw new Error(response.errors[0].msg);
@@ -92,7 +108,7 @@ async function buscarBitacoras() {
       fecha: formatFecha(bitacora.fecha),
     }));
   } catch (error) {
-    console.error('Detalles del error:', error);
+    console.error('Detalles del error:', error.response);
     q$.notify({
       type: "negative",
       message: error.message || "Error al buscar las bitácoras.",
