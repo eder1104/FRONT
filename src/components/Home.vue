@@ -98,6 +98,15 @@
                 <div class="text-h6 q-mt-sm q-mb-xs">APRENDICES</div>
               </q-card-section>
             </q-card>
+
+            <q-card class="my-card" flat bordered @click="goToRoute('/Home/Informes')">
+              <div class="colorCorporativo flex-container">
+                <q-img src="../assets/Images/Logo-Informes.png" class="flex-img" />
+              </div>
+              <q-card-section class="flex-content">
+                <div class="text-h6 q-mt-sm q-mb-xs">INFORMES</div>
+              </q-card-section>
+            </q-card>
           </div>
         </q-page-container>
       </div>

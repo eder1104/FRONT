@@ -22,6 +22,7 @@
 
           <q-select
             filled
+            clearable
             v-model="selectedAprendiz"
             :options="aprendices"
             use-input
@@ -169,7 +170,7 @@ const columns = ref([
   },
   {
     name: "opciones",
-    label: "Opciones",
+    label: "Estado",
     align: "center",
     sortable: true,
   },
