@@ -1,9 +1,12 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
-
-      <q-btn class="colorCorporativo" @click="dialogo('crear')" label="Crear Ficha" />
-<br><br>
+      <q-btn
+        class="colorCorporativo"
+        @click="dialogo('crear')"
+        label="Crear Ficha"
+      />
+      <br /><br />
       <q-table
         class="posicion"
         title="FICHAS"
@@ -18,7 +21,7 @@
               class="colorCorporativo editar"
               @click="dialogo('editar', props.row)"
               :loading="loadingButtons[props.row._id]?.editar || false"
-              >
+            >
               <font-awesome-icon icon="pen-to-square" />
             </q-btn>
             <q-btn
@@ -67,10 +70,10 @@
               @keydown="preventNonNumeric"
               @input="formatInputCodigoFicha"
               @keyup.enter="prompt = false"
-              >
+            >
               <template v-slot:prepend>
-                <font-awesome-icon icon="hashtag" />                
-              </template>  
+                <font-awesome-icon icon="hashtag" />
+              </template>
             </q-input>
 
             <q-input
@@ -81,33 +84,34 @@
               v-model="inputNombreFicha"
               autofocus
               @keyup.enter="prompt = false"
-              >
+            >
               <template v-slot:prepend>
-                  <font-awesome-icon icon="spell-check" />
-                </template>              
-              </q-input>
-              
+                <font-awesome-icon icon="spell-check" />
+              </template>
+            </q-input>
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
-            <q-btn 
-            flat  
-            class="btnCerrar"
-            v-close-popup 
-            >
-                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="margin-right: 5px;"/>                  
-                Cerrar              
-                </q-btn>
+            <q-btn flat class="btnCerrar" v-close-popup>
+              <font-awesome-icon
+                icon="fa-solid fa-circle-xmark"
+                style="margin-right: 5px"
+              />
+              Cerrar
+            </q-btn>
 
-            <q-btn 
-            flat 
-            class="btnGuardar"
-            :loading="loadingGeneral"
-            @click="validar()"
+            <q-btn
+              flat
+              class="btnGuardar"
+              :loading="loadingGeneral"
+              @click="validar()"
             >
-                <font-awesome-icon icon="fa-solid fa-floppy-disk" style="margin-right: 5px;" />                
-                Guardar Ficha
-              </q-btn>
+              <font-awesome-icon
+                icon="fa-solid fa-floppy-disk"
+                style="margin-right: 5px"
+              />
+              Guardar Ficha
+            </q-btn>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -126,8 +130,8 @@ const prompt = ref(false);
 const inputCodigoFicha = ref("");
 const inputNombreFicha = ref("");
 const rows = ref([]);
-const loadingGeneral = ref(false); 
-const loadingButtons = ref({}); 
+const loadingGeneral = ref(false);
+const loadingButtons = ref({});
 
 let dialogTitle = ref("");
 let editando = ref(false);
@@ -186,19 +190,24 @@ async function desactivar(id) {
   } catch (error) {
     console.log(error);
   } finally {
-    loadingButtons.value[id] = { ...loadingButtons.value[id], desactivar: false };
+    loadingButtons.value[id] = {
+      ...loadingButtons.value[id],
+      desactivar: false,
+    };
   }
 }
 
 const validar = async () => {
-
   loadingGeneral.value = true;
-  if (!inputCodigoFicha.value || !inputNombreFicha.value) {
+  
+  // Validar si los campos están vacíos o contienen solo espacios en blanco
+  if (!inputCodigoFicha.value.trim() || !inputNombreFicha.value.trim()) {
     q$.notify({
       type: "negative",
       message: "Rellena todos los campos.",
     });
-    return;
+    loadingGeneral.value = false; // Detener la carga
+    return; // Salir de la función
   }
 
   try {
@@ -230,7 +239,7 @@ const validar = async () => {
         }
       );
     }
-    traer();
+    traer(); // Actualizar la tabla
     prompt.value = false;
   } catch (error) {
     q$.notify({
@@ -238,7 +247,7 @@ const validar = async () => {
       message: "Error al guardar la ficha.",
     });
   } finally {
-    loadingGeneral.value = false;
+    loadingGeneral.value = false; // Detener la carga al final
   }
 };
 
@@ -254,7 +263,10 @@ const dialogo = (accion, ficha = null) => {
     inputNombreFicha.value = ficha.nombre;
     fichaId.value = ficha._id;
     editando.value = true;
-    loadingButtons.value[ficha._id] = { ...loadingButtons.value[ficha._id], editar: false };
+    loadingButtons.value[ficha._id] = {
+      ...loadingButtons.value[ficha._id],
+      editar: false,
+    };
   }
   prompt.value = true;
 };
@@ -309,9 +321,8 @@ const formatInputCodigoFicha = (event) => {
 </script>
 
 <style>
-.activar, .desactivar{
+.activar,
+.desactivar {
   color: white;
 }
-
-
 </style>

@@ -228,6 +228,10 @@ onMounted(() => {
 padding: 10px;
 }
 
+.q-file {
+  padding: 10px;
+}
+
 .colorCorporativo{
   background-color: #238327 !important;
   color: white !important;

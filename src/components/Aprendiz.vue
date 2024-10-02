@@ -66,6 +66,7 @@
               <q-input
                 filled
                 label="Nombre del Aprendiz"
+                required
                 label-class="custom-label"
                 v-model="inputNombreAprendiz"
                 :disable="isLoading"
@@ -81,12 +82,14 @@
                 filled
                 label="Documento del Aprendiz"
                 label-class="custom-label"
+                required
                 v-model="inputDocumentoAprendiz"
                 :disable="isLoading"
                 @keyup.enter="guardar()"
                 >
                 <template v-slot:prepend>
-                  <font-awesome-icon icon="address-card" />                </template>              
+                  <font-awesome-icon icon="address-card" />                
+                </template>              
               </q-input>
 
               <q-input
@@ -94,6 +97,7 @@
                 label="Teléfono del Aprendiz"
                 label-class="custom-label"
                 v-model="inputTelefonoAprendiz"
+                required
                 :disable="isLoading"
                 @keyup.enter="guardar()"
                 >
@@ -107,6 +111,7 @@
                 label="Email del Aprendiz"
                 label-class="custom-label"
                 v-model="inputEmailAprendiz"
+                required
                 :disable="isLoading"
                 @keyup.enter="guardar()"
                 >
@@ -114,6 +119,20 @@
                   <font-awesome-icon icon="envelope" />                
                 </template>              
               </q-input>
+
+              <q-file
+                filled
+                label="Firma del Aprendiz"
+                v-model="firma"
+                name="firma"
+                required 
+                :disable="isLoading"
+                @keyup.enter="guardar()"
+                >
+                <template v-slot:prepend>
+                  <font-awesome-icon icon="file-signature"/>                
+                </template>              
+              </q-file>
               
               <q-select
                 filled
@@ -170,6 +189,7 @@ const inputNombreAprendiz = ref("");
 const inputDocumentoAprendiz = ref("");
 const inputTelefonoAprendiz = ref("");
 const inputEmailAprendiz = ref("");
+const firma = ref(null);
 const fichas = ref([]);
 const selectedFicha = ref(null);
 const editando = ref(false);
@@ -249,6 +269,7 @@ function abrirDialogo(row = null) {
     inputDocumentoAprendiz.value = row.documento;
     inputTelefonoAprendiz.value = row.telefono;
     inputEmailAprendiz.value = row.email;
+    firma.value = row.firma;
     selectedFicha.value = row.id_ficha || null;
   } else {
     editando.value = false;
@@ -257,6 +278,7 @@ function abrirDialogo(row = null) {
     inputDocumentoAprendiz.value = "";
     inputTelefonoAprendiz.value = "";
     inputEmailAprendiz.value = "";
+    firma.value = null
     selectedFicha.value = null;
   }
   prompt.value = true;
@@ -283,69 +305,76 @@ async function traerFichas() {
 
 async function guardar() {
   isLoading.value = true;
-  const fichaId = selectedFicha.value.id || selectedFicha.value;
+  const fichaId = selectedFicha.value?.id || selectedFicha.value;
 
+  // Verifica que todos los campos estén llenos
   if (
     !inputNombreAprendiz.value ||
     !inputDocumentoAprendiz.value ||
     !inputTelefonoAprendiz.value ||
-    !inputEmailAprendiz.value
+    !inputEmailAprendiz.value ||
+    !firma.value 
   ) {
     $q.notify({
       type: "negative",
       message: "Rellena todos los campos.",
     });
+    isLoading.value = false;
     return;
   }
 
+  const formData = new FormData();
+  formData.append("documento", inputDocumentoAprendiz.value.trim());
+  formData.append("nombre", inputNombreAprendiz.value.trim());
+  formData.append("telefono", inputTelefonoAprendiz.value.trim());
+  formData.append("email", inputEmailAprendiz.value.trim());
+  formData.append("id_ficha", fichaId);
+  formData.append("firma", firma.value);
+
   try {
     if (editando.value) {
-      const respuesta = await useAprendiz.actualizarAprendiz(
-        aprendizId.value,
-        inputDocumentoAprendiz.value.trim(),
-        inputNombreAprendiz.value.trim(),
-        inputTelefonoAprendiz.value.trim(),
-        inputEmailAprendiz.value.trim(),
-        fichaId
-      );
+      const respuesta = await useAprendiz.actualizarAprendiz(aprendizId.value, formData);
       if (respuesta.success) {
         $q.notify({
           type: "positive",
           message: "Aprendiz actualizado correctamente.",
         });
       } else {
-
+        $q.notify({
+          type: "negative",
+          message: "Error al actualizar el aprendiz.",
+        });
       }
     } else {
-      const respuesta = await useAprendiz.crearAprendiz(
-        inputDocumentoAprendiz.value.trim(),
-        inputNombreAprendiz.value.trim(),
-        inputTelefonoAprendiz.value.trim(),
-        inputEmailAprendiz.value.trim(),
-        fichaId
-      );
+      console.log('Firma:', firma.value);
+      const respuesta = await useAprendiz.crearAprendiz(formData);
       if (respuesta.success) {
         $q.notify({
           type: "positive",
-          message: editando.value
-            ? "Aprendiz actualizado correctamente."
-            : "Aprendiz creado correctamente.",
+          message: "Aprendiz creado correctamente.",
         });
-        traer();
-        prompt.value = false;
+        await traer(); // Actualiza la lista después de crear
+        prompt.value = false; // Cierra el diálogo
       } else {
-
+        $q.notify({
+          type: "negative",
+          message: "Error al crear el aprendiz.",
+        });
       }
     }
-    traer();
-    prompt.value = false;
+    prompt.value = false; // Cierra el diálogo al final
   } catch (error) {
-    console.log(error)
-    console.error("Error en guardar:", error);
+    console.error(error); // Muestra el error en la consola
+    $q.notify({
+      type: "warning",
+      message: "Ocurrió un error.",
+    });
   } finally {
-    isLoading.value = false;
+    isLoading.value = false; // Detiene la carga
   }
 }
+
+
 
 async function activar(id) {
   loadingButtons.value[id] = { ...loadingButtons.value[id], activar: true };

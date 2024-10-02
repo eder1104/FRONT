@@ -8,8 +8,8 @@ export const useAprendizStore = defineStore("aprendiz", () => {
   const q = useQuasar();
   
   const axiosInstance = axios.create({
-    baseURL: 'https://api-asistencia-sena.onrender.com/api',
-    // baseURL: 'http://localhost:5001/api'
+    // baseURL: 'https://api-asistencia-sena.onrender.com/api',
+    baseURL: 'http://localhost:5001/api'
   });
 
   // Interceptor para agregar el token en cada solicitud
@@ -48,34 +48,55 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     }
   };
 
-  const crearAprendiz = async (documento, nombre, telefono, email, id_ficha) => {
+  const crearAprendiz = async (formData) => {
     try {
-      const r = await axiosInstance.post(`/Aprendices/crearaprendiz`, {
-        documento, nombre, telefono, email, id_ficha,
+      const r = await axiosInstance.post(`/Aprendices/crearaprendiz`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
+      // Notificación de éxito
       q.notify({
         type: 'positive',
         message: 'Aprendiz creado con éxito',
       });
       return r;
     } catch (error) {
-console.log(error);
-;
+      console.log(error);
+      // Notificación de error
+      q.notify({
+        type: 'negative',
+        message: 'Error al crear aprendiz',
+      });
       throw error;
     }
   };
-
-  const actualizarAprendiz = async (id, documento, nombre, telefono, email, id_ficha) => {
+  
+  const actualizarAprendiz = async (formData) => {
+    formData = new FormData();
+    formData.append("documento", documento);
+    formData.append("nombre", nombre);
+    formData.append("telefono", telefono);
+    formData.append("email", email);
+    formData.append("id_ficha", id_ficha);
+    if (firma) {
+      formData.append("firma", firma);
+    }  
     try {
-      const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, {
-        nombre, documento, telefono, email, id_ficha
+      const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
+      // Notificación de éxito
       q.notify({
         type: 'positive',
         message: 'Aprendiz actualizado con éxito',
       });
       return r;
     } catch (error) {
+      console.log(error);
+      // Notificación de error
       q.notify({
         type: 'negative',
         message: 'Error al actualizar aprendiz',
@@ -83,6 +104,7 @@ console.log(error);
       throw error;
     }
   };
+  
   
 
   const activarAprendiz = async (id) => {

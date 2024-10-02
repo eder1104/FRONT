@@ -7,13 +7,14 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPenToSquare, faBan, faCheck, faFileInvoice, faSpellCheck, 
          faAddressCard, faPhone, faEnvelope, faUsersLine, faLock, 
-         faHashtag, faUserGraduate, faCalendarDays, faFloppyDisk, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+         faHashtag, faUserGraduate, faCalendarDays, faFloppyDisk, faCircleXmark,
+         faFileSignature } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // Añadir el ícono a la librería de Font Awesome
 library.add(faPenToSquare, faBan, faCheck, faFileInvoice, faSpellCheck, 
   faAddressCard, faPhone, faEnvelope, faUsersLine, faLock, faHashtag, 
-  faUserGraduate, faCalendarDays,faFloppyDisk, faCircleXmark)
+  faUserGraduate, faCalendarDays,faFloppyDisk, faCircleXmark, faFileSignature)
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'

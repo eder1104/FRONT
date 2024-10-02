@@ -2,31 +2,36 @@
   <div class="q-pa-md">
     <q-layout view="lHh Lpr lff">
       <div class="filtros">
-        <q-input 
+        <q-input
           filled
-          v-model="fechaBusqueda" 
-          label="Seleccionar fecha" 
-          type="date" 
-          :disable="loading" 
+          v-model="fechaBusqueda"
+          label="Seleccionar fecha"
+          type="date"
+          :disable="loading"
         />
 
-        <q-input 
+        <q-input
           filled
-          v-model="fichaBusqueda" 
-          label="ID Ficha" 
-          type="text" 
-          :disable="loading" 
+          v-model="fichaBusqueda"
+          label="ID Ficha"
+          type="text"
+          :disable="loading"
         />
 
-      
-<div id="divBtnBuscar">
-        <q-btn 
-        class="colorCorporativo" 
-        :disable="loading" 
-        @click="buscarBitacoras()">Buscar
+        <div id="divBtnBuscar">
+          <q-btn
+            class="colorCorporativo"
+            :disable="loading"
+            @click="buscarBitacoras()"
+            >Buscar
+          </q-btn>
+        </div>
+      </div>
+      <div class="box">
+        <q-btn :disable="loading" class="crearPDF colorCorporativo" to="/Tabla">
+          <font-awesome-icon icon="file-invoice" style="color: #ffffff" />
         </q-btn>
-
-</div></div>
+      </div>
       <q-table
         title="INFORMES"
         :rows="rows"
@@ -48,6 +53,7 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useBitacoraStore } from "../stores/bitacora.js";
+
 
 const rows = ref([]);
 const columns = ref([
@@ -77,8 +83,8 @@ const columns = ref([
 ]);
 
 const loading = ref(false);
-const fichaBusqueda = ref('');
-const fechaBusqueda = ref('');
+const fichaBusqueda = ref("");
+const fechaBusqueda = ref("");
 const useBitacora = useBitacoraStore();
 const q$ = useQuasar();
 
@@ -94,13 +100,17 @@ async function buscarBitacoras() {
     }
 
     // Formatear la fecha correctamente
-    const fechaFormatted = new Date(fechaBusqueda.value).toISOString().split('T')[0]; // Solo la fecha sin hora
+    const fechaFormatted = new Date(fechaBusqueda.value)
+      .toISOString()
+      .split("T")[0]; // Solo la fecha sin hora
 
     console.log("Parámetros:", {
       id_ficha: fichaBusqueda.value,
-      fecha: fechaFormatted
+      fecha: fechaFormatted,
     });
-    {fichaBusqueda.value, fechaFormatted}
+    {
+      fichaBusqueda.value, fechaFormatted;
+    }
     const response = await useBitacora.listarPorFechaYFicha();
 
     if (response.errors) {
@@ -112,7 +122,7 @@ async function buscarBitacoras() {
       fecha: formatFecha(bitacora.fecha),
     }));
   } catch (error) {
-    console.error('Detalles del error:', error.response);
+    console.error("Detalles del error:", error.response);
     q$.notify({
       type: "negative",
       message: error.message || "Error al buscar las bitácoras.",
@@ -121,8 +131,6 @@ async function buscarBitacoras() {
     loading.value = false;
   }
 }
-
-
 
 function formatFecha(fecha) {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
@@ -137,14 +145,23 @@ function formatFecha(fecha) {
   justify-content: center;
 }
 
-.filtro{
-padding-inline: 10% !important;
+.filtro {
+  padding-inline: 10% !important;
 }
 
-#divBtnBuscar{
+#divBtnBuscar {
   align-content: center !important;
   justify-content: center !important;
   align-items: center !important;
-  
+}
+
+.box{
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+
+.crearPDF {
+  width: 3%;
 }
 </style>
