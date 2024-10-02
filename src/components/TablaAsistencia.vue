@@ -8,7 +8,6 @@
           </tr>
           <tr>
             <th colspan="2">OBJETIVO (S)</th>
-
             <th colspan="9"></th>
           </tr>
           <tr>
@@ -51,7 +50,7 @@ import { useBitacoraStore } from "../stores/bitacora";
 import { useAprendizStore } from "../stores/aprendiz";
 
 let day = ref("___");
-let numberMonth =ref("___")
+let numberMonth = ref("___");
 let nameMonth = ref("___");
 let year = ref("___");
 
@@ -70,7 +69,7 @@ const months = [
   "DICIEMBRE",
 ];
 
-const actaNumber = ref("___")
+const actaNumber = ref("___");
 
 const rows = ref([]);
 const displayedRows = ref([]);
@@ -81,7 +80,7 @@ const useAprendiz = useAprendizStore();
 onBeforeMount(async () => {
   await traer();
   fillRemainingRows();
-  obtenerFechaActual()
+  obtenerFechaActual();
 });
 
 async function traer() {
@@ -133,37 +132,37 @@ function fillRemainingRows() {
 function obtenerFechaActual() {
   const fecha = new Date();
 
-  day = fecha.getDate();
-  numberMonth = fecha.getMonth();
+  day.value = fecha.getDate();
+  numberMonth.value = fecha.getMonth();
   nameMonth.value = months[fecha.getMonth()];
-  year = fecha.getFullYear();
+  year.value = fecha.getFullYear();
 
   console.log(fecha);
 
   return {
-    day: day,
-    numberMonth: numberMonth,
-    nameMonth: nameMonth,
-    year: year,
+    day: day.value,
+    numberMonth: numberMonth.value,
+    nameMonth: nameMonth.value,
+    year: year.value,
   };
 }
 </script>
 
 <style scoped>
-
 .table-container {
   overflow-x: auto;
-  width: 100%;padding: 1%;
+  width: 100%;
+  padding: 1%;
 }
 
 .responsive-table {
   border-collapse: collapse;
   table-layout: auto;
-  /* white-space: nowrap;   */
   word-wrap: break-word;
 }
 
-.responsive-table th, .responsive-table td {
+.responsive-table th,
+.responsive-table td {
   border: 1px solid #000000;
   text-align: center;
   font-size: 14px;
@@ -187,14 +186,15 @@ function obtenerFechaActual() {
   padding: 0px !important;
 }
 
-#imagenFirma img{
+#imagenFirma img {
   height: 70px !important;
   padding: 0px !important;
 }
 
 /* Ajustes para tablets */
 @media screen and (max-width: 1024px) {
-  .responsive-table th, .responsive-table td {
+  .responsive-table th,
+  .responsive-table td {
     font-size: 13px;
     padding: 9px;
   }
@@ -202,83 +202,124 @@ function obtenerFechaActual() {
 
 /* Ajustes para pantallas medianas */
 @media screen and (max-width: 768px) {
-  .responsive-table th, .responsive-table td {
+  .responsive-table th,
+  .responsive-table td {
     font-size: 12px;
     padding: 8px;
   }
-  
-  .responsive-table th:nth-child(2), .responsive-table td:nth-child(2),
-  .responsive-table th:nth-child(4), .responsive-table td:nth-child(4),
-  .responsive-table th:nth-child(5), .responsive-table td:nth-child(5),
-  .responsive-table th:nth-child(6), .responsive-table td:nth-child(6),
-  .responsive-table th:nth-child(8), .responsive-table td:nth-child(8) {
+
+  .responsive-table th:nth-child(2),
+  .responsive-table td:nth-child(2),
+  .responsive-table th:nth-child(4),
+  .responsive-table td:nth-child(4),
+  .responsive-table th:nth-child(5),
+  .responsive-table td:nth-child(5),
+  .responsive-table th:nth-child(6),
+  .responsive-table td:nth-child(6),
+  .responsive-table th:nth-child(8),
+  .responsive-table td:nth-child(8) {
     display: none; /* Ocultar columnas menos importantes en pantallas medianas */
   }
 }
 
 /* Ajustes para pantallas pequeñas (móviles) */
 @media screen and (max-width: 480px) {
-  .responsive-table th, .responsive-table td {
+  .responsive-table th,
+  .responsive-table td {
     font-size: 10px;
     padding: 6px;
   }
 
-  .responsive-table th:nth-child(3), .responsive-table td:nth-child(3),
-  .responsive-table th:nth-child(7), .responsive-table td:nth-child(7),
-  .responsive-table th:nth-child(9), .responsive-table td:nth-child(9),
-  .responsive-table th:nth-child(10), .responsive-table td:nth-child(10) {
+  .responsive-table th:nth-child(3),
+  .responsive-table td:nth-child(3),
+  .responsive-table th:nth-child(7),
+  .responsive-table td:nth-child(7),
+  .responsive-table th:nth-child(9),
+  .responsive-table td:nth-child(9),
+  .responsive-table th:nth-child(10),
+  .responsive-table td:nth-child(10) {
     display: none; /* Ocultar más columnas en pantallas pequeñas */
   }
-  
-  .responsive-table th, .responsive-table td {
+
+  .responsive-table th,
+  .responsive-table td {
     word-wrap: break-word;
   }
 }
 
 /* Ajustes para pantallas extra pequeñas (menos de 400px) */
 @media screen and (max-width: 400px) {
-  .responsive-table th, .responsive-table td {
+  .responsive-table th,
+  .responsive-table td {
     font-size: 9px;
     padding: 4px;
   }
 
   /* Ocultar más columnas para ajustarse a pantallas muy pequeñas */
-  .responsive-table th:nth-child(3), .responsive-table td:nth-child(3),
-  .responsive-table th:nth-child(7), .responsive-table td:nth-child(7),
-  .responsive-table th:nth-child(9), .responsive-table td:nth-child(9),
-  .responsive-table th:nth-child(10), .responsive-table td:nth-child(10),
-  .responsive-table th:nth-child(11), .responsive-table td:nth-child(11) {
+  .responsive-table th:nth-child(3),
+  .responsive-table td:nth-child(3),
+  .responsive-table th:nth-child(7),
+  .responsive-table td:nth-child(7),
+  .responsive-table th:nth-child(9),
+  .responsive-table td:nth-child(9),
+  .responsive-table th:nth-child(10),
+  .responsive-table td:nth-child(10),
+  .responsive-table th:nth-child(11),
+  .responsive-table td:nth-child(11) {
     display: none;
   }
-  @media print {
+}
+
+/* Estilos para impresión */
+@media print {
+  @page {
+    size: letter; /* Tamaño carta */
+    margin: 10mm; /* Márgenes de 10mm */
+  }
+
+  body {
+    width: 100%; /* Asegura que el cuerpo se ajuste al ancho */
+  }
 
   .table-container {
-    overflow: visible;
     width: 100%;
-    padding: 0;
+    overflow: visible;
+    margin: 0;
   }
 
   .responsive-table {
-    table-layout: fixed;
-    width: 100%;
+    width: 100%; /* Asegura que la tabla ocupe el 100% del ancho */
+    border-collapse: collapse;
+    font-size: 8px; /* Tamaño de fuente más pequeño */
   }
 
   .responsive-table th,
   .responsive-table td {
-    font-size: 12px;
-    word-wrap: break-word;
-    padding: 5px;
+    padding: 4px; /* Reduce el padding de las celdas */
+    border: 1px solid black; /* Bordes de la tabla */
+    word-wrap: break-word; /* Permite que el texto se ajuste */
   }
 
-  .responsive-table th:nth-child(4),
-  .responsive-table td:nth-child(4),
-  .responsive-table th:nth-child(5),
-  .responsive-table td:nth-child(5),
-  .responsive-table th:nth-child(6),
-  .responsive-table td:nth-child(6) {
-    display: none;
+  #imagenFirma img {
+    max-height: 20px; /* Reduce el tamaño de la firma */
+    width: auto;
   }
-}
-}
 
+  /* Ajustes adicionales para impresión */
+  th:nth-child(2),
+  td:nth-child(2),
+  th:nth-child(4),
+  td:nth-child(4),
+  th:nth-child(5),
+  td:nth-child(5),
+  th:nth-child(6),
+  td:nth-child(6),
+  th:nth-child(8),
+  td:nth-child(8) {
+    display: table-cell; /* Asegura que las columnas ocultas en pantallas se muestren al imprimir */
+  }
+
+  /* Ajustes para ocultar elementos innecesarios al imprimir */
+  /* Agregar más reglas aquí si es necesario */
+}
 </style>
