@@ -99,8 +99,16 @@ export const useBitacoraStore = defineStore("bitacora", () => {
 
   const crearBitacora = async (bitacoraData) => {
     console.log(bitacoraData)
+<<<<<<< HEAD
     try {
       const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
+=======
+  const crearBitacora = async (bitacoraData) => {
+    console.log(bitacoraData)
+    try {
+      const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
+      const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       q.notify({
         type: 'positive',
         message: 'Bitácora creada con éxito',
@@ -116,22 +124,41 @@ export const useBitacoraStore = defineStore("bitacora", () => {
   };
 
   const actualizarEstado = async (id, estado) => {
+<<<<<<< HEAD
     try {
       const r = await axiosInstance.put(`/Bitacoras/actualizarEstado/${id}`, { estado });
       q.notify({
         type: 'positive',
         message: 'Estado de la bitácora actualizado con éxito',
+=======
+  const actualizarEstado = async (id, estado) => {
+    try {
+      const r = await axiosInstance.put(`/Bitacoras/actualizarEstado/${id}`, { estado });
+      const r = await axiosInstance.put(`/Bitacoras/actualizarEstado/${id}`, { estado });
+      q.notify({
+        type: 'positive',
+        message: 'Estado de la bitácora actualizado con éxito',
+        message: 'Estado de la bitácora actualizado con éxito',
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       });
       return r;
     } catch (error) {
       q.notify({
         type: 'negative',
         message: 'Error al actualizar el estado de la bitácora',
+<<<<<<< HEAD
+=======
+        message: 'Error al actualizar el estado de la bitácora',
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       });
       throw error;
     }
   };
   
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
 
   return {
     bitacorasFiltradas,

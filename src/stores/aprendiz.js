@@ -49,6 +49,10 @@ export const useAprendizStore = defineStore("aprendiz", () => {
   };
 
   const crearAprendiz = async (formData) => {
+<<<<<<< HEAD
+=======
+  const crearAprendiz = async (formData) => {
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
     try {
       const r = await axiosInstance.post(`/Aprendices/crearaprendiz`, formData, {
         headers: {
@@ -56,6 +60,15 @@ export const useAprendizStore = defineStore("aprendiz", () => {
         }
       });
       // Notificación de éxito
+<<<<<<< HEAD
+=======
+      const r = await axiosInstance.post(`/Aprendices/crearaprendiz`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      // Notificación de éxito
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       q.notify({
         type: 'positive',
         message: 'Aprendiz creado con éxito',
@@ -64,6 +77,11 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     } catch (error) {
       console.log(error);
       // Notificación de error
+<<<<<<< HEAD
+=======
+      console.log(error);
+      // Notificación de error
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       q.notify({
         type: 'negative',
         message: 'Error al crear aprendiz',
@@ -82,6 +100,20 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     if (firma) {
       formData.append("firma", firma);
     }  
+<<<<<<< HEAD
+=======
+  
+  const actualizarAprendiz = async (formData) => {
+    formData = new FormData();
+    formData.append("documento", documento);
+    formData.append("nombre", nombre);
+    formData.append("telefono", telefono);
+    formData.append("email", email);
+    formData.append("id_ficha", id_ficha);
+    if (firma) {
+      formData.append("firma", firma);
+    }  
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
     try {
       const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, formData, {
         headers: {
@@ -89,6 +121,15 @@ export const useAprendizStore = defineStore("aprendiz", () => {
         }
       });
       // Notificación de éxito
+<<<<<<< HEAD
+=======
+      const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      // Notificación de éxito
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       q.notify({
         type: 'positive',
         message: 'Aprendiz actualizado con éxito',
@@ -97,6 +138,11 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     } catch (error) {
       console.log(error);
       // Notificación de error
+<<<<<<< HEAD
+=======
+      console.log(error);
+      // Notificación de error
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
       q.notify({
         type: 'negative',
         message: 'Error al actualizar aprendiz',
@@ -106,6 +152,10 @@ export const useAprendizStore = defineStore("aprendiz", () => {
   };
   
   
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
 
   const activarAprendiz = async (id) => {
     try {

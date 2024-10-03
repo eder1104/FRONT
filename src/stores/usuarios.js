@@ -3,6 +3,10 @@ import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from 'vue-router';
 import { SessionStorage, useQuasar } from 'quasar';
+<<<<<<< HEAD
+=======
+import { SessionStorage, useQuasar } from 'quasar';
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
 
 export const useUsuarioStore = defineStore("usuario", () => {
   const loading = ref(false);
@@ -62,6 +66,10 @@ export const useUsuarioStore = defineStore("usuario", () => {
     token.value = null;
     localStorage.removeItem('token');
     SessionStorage.removeItem('nombre', 'email')
+<<<<<<< HEAD
+=======
+    SessionStorage.removeItem('nombre', 'email')
+>>>>>>> 2ef81a3edd1843fa3de05ddb684fbc906b39d927
     router.push('/');
   };
 
