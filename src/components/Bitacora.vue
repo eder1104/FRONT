@@ -3,12 +3,25 @@
     <q-layout view="lHh Lpr lff">
       <p><b>Fecha Actual:</b> {{ dia }} de {{ mesNombre }} del {{ anio }}</p>
       <div class="botones">
+      <p><b>Fecha Actual:</b> {{ dia }} de {{ mesNombre }} del {{ anio }}</p>
+      <div class="botones">
         <q-btn
           :disable="loading"
           @click="dialogo('crear')"
           label="Crear Bitacora"
           class="crear colorCorporativo"
+          class="crear colorCorporativo"
         />
+        <q-btn :disable="loading" class="crearPDF colorCorporativo" to="/Tabla">
+          <font-awesome-icon icon="file-invoice" style="color: #ffffff" />
+        </q-btn>
+      </div>
+      <br />
+      <q-dialog v-model="prompt" persistent :style="{ zIndex: 1000 }">
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h5 tituloCuadroDeDialogo">{{ dialogTitle }}</div>
+          </q-card-section>
         <q-btn :disable="loading" class="crearPDF colorCorporativo" to="/Tabla">
           <font-awesome-icon icon="file-invoice" style="color: #ffffff" />
         </q-btn>
@@ -75,7 +88,41 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+              Guardar Bitacora
+            </q-btn>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
 
+      <q-table
+        title="BITÁCORAS"
+        :rows="rows"
+        :columns="columns"
+        row-key="name"
+        pagination.sync="pagination"
+        :rows-per-page-options="[20, 50, 100, 0]"
+        :loading="loading"
+      >
+        <div>
+          <hr style="border: 1px solid black; width: 50%; margin: auto" />
+        </div>
+        <template v-slot:body-cell-opciones="props">
+          <q-td :props="props">
+            <q-form>
+              <q-select
+                v-model="props.row.estado"
+                :options="estados"
+                label="Estado"
+                filled
+                :disable="loading"
+                @update:model-value="
+                  (valor) => cambiarEstado(props.row._id, valor)
+                "
+              />
+            </q-form>
+          </q-td>
+        </template>
+      </q-table>
       <q-table
         title="BITÁCORAS"
         :rows="rows"
@@ -120,6 +167,7 @@ onBeforeMount(() => {
   traer();
   cargarAprendices();
   obtenerFechaActual();
+  obtenerFechaActual();
 });
 
 let dia = ref(null);
@@ -141,13 +189,35 @@ const meses = ref([
   "Noviembre",
   "Diciembre",
 ]);
+let dia = ref(null);
+let mesNumero = ref(null);
+let mesNombre = ref(null);
+let anio = ref(null);
+
+const meses = ref([
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre,",
+  "Noviembre",
+  "Diciembre",
+]);
 const prompt = ref(false);
 const loading = ref(false);
+const loading = ref(false);
 const selectedAprendiz = ref(null);
+const fecha = ref(null);
 const fecha = ref(null);
 const aprendices = ref([]);
 const dialogTitle = ref("");
 const q$ = useQuasar();
+const estados = ref(["Asistió", "No Asistió", "Pendiente", "Excusa"]);
 const estados = ref(["Asistió", "No Asistió", "Pendiente", "Excusa"]);
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
@@ -159,11 +229,13 @@ const columns = ref([
     label: "Cédula del Aprendiz",
     align: "center",
     field: "cedulaAprendiz",
+    field: "cedulaAprendiz",
     sortable: true,
   },
   {
     name: "nombre",
     required: true,
+    label: "Nombre del Aprendiz",
     label: "Nombre del Aprendiz",
     align: "center",
     field: "nombre",
@@ -179,6 +251,7 @@ const columns = ref([
   {
     name: "opciones",
     label: "Estado",
+    label: "Estado",
     align: "center",
     sortable: true,
   },
@@ -186,16 +259,25 @@ const columns = ref([
 
 async function traer() {
   loading.value = true;
+  loading.value = true;
   try {
+    let response = await useBitacora.listarTodo();
+    let response2 = await useAprendiz.listarAprendiz();
     let response = await useBitacora.listarTodo();
     let response2 = await useAprendiz.listarAprendiz();
 
     rows.value = response.data.bitacoras.map((bitacora) => {
       let aprendiz = response2.data.find(
         (aprendiz) => aprendiz?._id === bitacora?.id_aprendiz
+    rows.value = response.data.bitacoras.map((bitacora) => {
+      let aprendiz = response2.data.find(
+        (aprendiz) => aprendiz?._id === bitacora?.id_aprendiz
       );
       return {
         ...bitacora,
+        cedulaAprendiz: aprendiz?.documento || "No disponible",
+        nombre: aprendiz?.nombre || "Desconocido",
+        fecha: formatFecha(bitacora?.fecha || new Date()),
         cedulaAprendiz: aprendiz?.documento || "No disponible",
         nombre: aprendiz?.nombre || "Desconocido",
         fecha: formatFecha(bitacora?.fecha || new Date()),
@@ -222,9 +304,30 @@ function obtenerFechaActual() {
     mesNombre: mesNombre,
     año: anio,
   };
+    loading.value = false;
+  }
+}
+
+function obtenerFechaActual() {
+  const fecha = new Date();
+
+  dia = fecha.getDate();
+  mesNumero = fecha.getMonth();
+  mesNombre.value = meses.value[fecha.getMonth()];
+  anio = fecha.getFullYear();
+
+  console.log(fecha);
+
+  return {
+    día: dia,
+    mesNumero: mesNumero,
+    mesNombre: mesNombre,
+    año: anio,
+  };
 }
 
 async function cargarAprendices() {
+  loading.value = true;
   loading.value = true;
   try {
     const response = await useAprendiz.listarAprendiz();
@@ -241,6 +344,7 @@ async function cargarAprendices() {
     console.error("Error al cargar los aprendices:", error);
   } finally {
     loading.value = false;
+    loading.value = false;
   }
 }
 
@@ -249,11 +353,23 @@ const cambiarEstado = async (id, estado) => {
     loading.value = true;
     await useBitacora.actualizarEstado(id, estado);
     await traer();
+const cambiarEstado = async (id, estado) => {
+  try {
+    loading.value = true;
+    await useBitacora.actualizarEstado(id, estado);
+    await traer();
   } catch (error) {
+    console.error("Error al cambiar estado:", error);
     console.error("Error al cambiar estado:", error);
   } finally {
     loading.value = false;
+    loading.value = false;
   }
+};
+
+function formatFecha(fecha) {
+  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  return new Date(fecha).toLocaleDateString("es-ES", options);
 };
 
 function formatFecha(fecha) {
@@ -287,7 +403,13 @@ const validar = async () => {
   }
 
   loading.value = true;
+  loading.value = true;
   try {
+    const bitacoraData = {
+      id_aprendiz: selectedAprendiz.value,
+      fecha: fecha.value,
+    };
+
     const bitacoraData = {
       id_aprendiz: selectedAprendiz.value,
       fecha: fecha.value,
@@ -295,15 +417,20 @@ const validar = async () => {
 
     if (dialogTitle.value === "Editar Bitácora") {
       await useBitacora.actualizar(bitacoraData);
+      await useBitacora.actualizar(bitacoraData);
     } else {
+      await useBitacora.crearBitacora(bitacoraData);
       await useBitacora.crearBitacora(bitacoraData);
     }
 
+
     await traer();
+    prompt.value = false;
     prompt.value = false;
   } catch (error) {
     q$.notify({
       type: "negative",
+      message: "Error al guardar la bitácora.",
       message: "Error al guardar la bitácora.",
     });
     console.error(
@@ -312,11 +439,16 @@ const validar = async () => {
     );
   } finally {
     loading.value = false;
+    loading.value = false;
   }
 };
 </script>
 
 <style>
+.botones {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: end !important;
 .botones {
   display: flex !important;
   justify-content: space-between !important;
@@ -344,6 +476,7 @@ const validar = async () => {
   padding: 3px !important;
 }
 
+
 th.text-center {
   font-size: 15px !important;
   font-weight: bold !important;
@@ -354,3 +487,4 @@ td {
   padding: 2% !important;
 }
 </style>
+

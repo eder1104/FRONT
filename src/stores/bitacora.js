@@ -99,7 +99,10 @@ export const useBitacoraStore = defineStore("bitacora", () => {
 
   const crearBitacora = async (bitacoraData) => {
     console.log(bitacoraData)
+  const crearBitacora = async (bitacoraData) => {
+    console.log(bitacoraData)
     try {
+      const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
       const r = await axiosInstance.post(`/Bitacoras/crearBitacora`, bitacoraData);
       q.notify({
         type: 'positive',
@@ -116,10 +119,13 @@ export const useBitacoraStore = defineStore("bitacora", () => {
   };
 
   const actualizarEstado = async (id, estado) => {
+  const actualizarEstado = async (id, estado) => {
     try {
+      const r = await axiosInstance.put(`/Bitacoras/actualizarEstado/${id}`, { estado });
       const r = await axiosInstance.put(`/Bitacoras/actualizarEstado/${id}`, { estado });
       q.notify({
         type: 'positive',
+        message: 'Estado de la bitácora actualizado con éxito',
         message: 'Estado de la bitácora actualizado con éxito',
       });
       return r;
@@ -127,10 +133,12 @@ export const useBitacoraStore = defineStore("bitacora", () => {
       q.notify({
         type: 'negative',
         message: 'Error al actualizar el estado de la bitácora',
+        message: 'Error al actualizar el estado de la bitácora',
       });
       throw error;
     }
   };
+  
   
 
   return {

@@ -49,7 +49,14 @@ export const useAprendizStore = defineStore("aprendiz", () => {
   };
 
   const crearAprendiz = async (formData) => {
+  const crearAprendiz = async (formData) => {
     try {
+      const r = await axiosInstance.post(`/Aprendices/crearaprendiz`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      // Notificación de éxito
       const r = await axiosInstance.post(`/Aprendices/crearaprendiz`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -62,6 +69,8 @@ export const useAprendizStore = defineStore("aprendiz", () => {
       });
       return r;
     } catch (error) {
+      console.log(error);
+      // Notificación de error
       console.log(error);
       // Notificación de error
       q.notify({
@@ -82,7 +91,24 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     if (firma) {
       formData.append("firma", firma);
     }  
+  
+  const actualizarAprendiz = async (formData) => {
+    formData = new FormData();
+    formData.append("documento", documento);
+    formData.append("nombre", nombre);
+    formData.append("telefono", telefono);
+    formData.append("email", email);
+    formData.append("id_ficha", id_ficha);
+    if (firma) {
+      formData.append("firma", firma);
+    }  
     try {
+      const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      // Notificación de éxito
       const r = await axiosInstance.put(`/Aprendices/actualizaraprendiz/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -97,6 +123,8 @@ export const useAprendizStore = defineStore("aprendiz", () => {
     } catch (error) {
       console.log(error);
       // Notificación de error
+      console.log(error);
+      // Notificación de error
       q.notify({
         type: 'negative',
         message: 'Error al actualizar aprendiz',
@@ -104,6 +132,7 @@ export const useAprendizStore = defineStore("aprendiz", () => {
       throw error;
     }
   };
+  
   
   
 
