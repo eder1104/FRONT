@@ -4,7 +4,7 @@
       <table class="responsive-table">
         <thead>
           <tr>
-            <th colspan="11">REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No- {{ actaNumber }}  DEL DÍA {{ day }} DEL MES DE {{ nameMonth }} DEL AÑO {{ year }}</th>
+            <th colspan="11">REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No- {{ actaNumber }} DEL DÍA {{ day }} DEL MES DE {{ nameMonth }} DEL AÑO {{ year }}</th>
           </tr>
           <tr>
             <th colspan="2">OBJETIVO (S)</th>
@@ -49,27 +49,17 @@
 import { ref, onBeforeMount } from "vue";
 import { useBitacoraStore } from "../stores/bitacora";
 
-let day = ref("___");
-let numberMonth =ref("___")
-let nameMonth = ref("___");
-let year = ref("___");
+let day = ref("_");
+let numberMonth = ref("_");
+let nameMonth = ref("_");
+let year = ref("_");
 
 const months = [
-  "ENERO",
-  "FEBRERO",
-  "MARZO",
-  "ABRIL",
-  "MAYO",
-  "JUNIO",
-  "JULIO",
-  "AGOSTO",
-  "SEPTIEMBRE",
-  "OCTUBRE",
-  "NOVIEMBRE",
-  "DICIEMBRE",
+  "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO",
+  "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE",
 ];
 
-const actaNumber = ref("___")
+const actaNumber = ref("_");
 
 const rows = ref([]);
 const displayedRows = ref([]);
@@ -77,97 +67,77 @@ const displayedRows = ref([]);
 const useBitacora = useBitacoraStore();
 
 onBeforeMount(() => {
-  traerBitacorasFiltradas(); 
+  traerBitacorasFiltradas();
   fillRemainingRows();
   obtenerFechaActual();
 });
 
 function traerBitacorasFiltradas() {
-  // Aquí obtenemos las bitácoras filtradas que ya están en el store
   rows.value = useBitacora.bitacorasFiltradas
-  .filter(bitacora => bitacora.estado === "Asistió")  // Filtra por el estado "Asistió"
-  .map((bitacora) => ({
-    nombre: bitacora.id_aprendiz?.nombre || "",
-    cedula: bitacora.id_aprendiz?.documento || "",
-    planta: "",
-    contratista: "",
-    otro: "",
-    dependencia: "",
-    correo: bitacora.id_aprendiz?.email || "",
-    telefono: bitacora.id_aprendiz?.telefono || "",
-    autorizaGrabacion: "",
-    firma: bitacora.id_aprendiz?.firma || "",
-  }));
+    .filter(bitacora => bitacora.estado === "Asistió")
+    .map(bitacora => ({
+      nombre: bitacora.id_aprendiz?.nombre || "",
+      cedula: bitacora.id_aprendiz?.documento || "",
+      planta: "",
+      contratista: "",
+      otro: "",
+      dependencia: "",
+      correo: bitacora.id_aprendiz?.email || "",
+      telefono: bitacora.id_aprendiz?.telefono || "",
+      autorizaGrabacion: "",
+      firma: bitacora.id_aprendiz?.firma || "",
+    }));
 
-    fillRemainingRows();
-
-  }
-
+  fillRemainingRows();
+}
 
 function fillRemainingRows() {
   displayedRows.value = rows.value.length >= 27 ? rows.value : rows.value.concat(
     Array(27 - rows.value.length).fill({
-      nombre: '',
-      cedula: '',
-      planta: '',
-      contratista: '',
-      otro: '',
-      dependencia: '',
-      correo: '',
-      telefono: '',
-      autorizaGrabacion: '',
-      firma: '',
+      nombre: '', cedula: '', planta: '', contratista: '',
+      otro: '', dependencia: '', correo: '', telefono: '',
+      autorizaGrabacion: '', firma: ''
     })
   );
 }
 
 function obtenerFechaActual() {
   const fecha = new Date();
-
-  day = fecha.getDate();
-  numberMonth = fecha.getMonth();
+  day.value = fecha.getDate();
+  numberMonth.value = fecha.getMonth();
   nameMonth.value = months[fecha.getMonth()];
-  year = fecha.getFullYear();
-
-  console.log(fecha);
-
-  return {
-    day: day,
-    numberMonth: numberMonth,
-    nameMonth: nameMonth,
-    year: year,
-  };
+  year.value = fecha.getFullYear();
 }
 </script>
 
 <style scoped>
-
 .table-container {
   overflow-x: auto;
-  width: 100%;padding: 1%;
+  width: 100%;
+  padding: 1%;
 }
 
 .responsive-table {
   border-collapse: collapse;
-  table-layout: auto;
-  /* white-space: nowrap;   */
+  table-layout: fixed;
+  width: 100%;
   word-wrap: break-word;
 }
 
 .responsive-table th, .responsive-table td {
   border: 1px solid #000000;
   text-align: center;
-  font-size: 14px;
-  padding: 10px;
+  font-size: 12px;
+  padding: 5px;
 }
 
 .responsive-table td {
-  padding: 7px !important;
+  padding: 5px !important;
 }
 
 .responsive-table th {
   font-weight: bold;
-  padding: 10px;
+  padding: 5px;
 }
 
 .responsive-table tr:nth-child(even) {
@@ -178,70 +148,33 @@ function obtenerFechaActual() {
   padding: 0px !important;
 }
 
-#imagenFirma img{
-  height: 70px !important;
+#imagenFirma img {
+  height: 50px !important;
   padding: 0px !important;
 }
 
 /* Ajustes para tablets */
 @media screen and (max-width: 1024px) {
   .responsive-table th, .responsive-table td {
-    font-size: 13px;
-    padding: 9px;
-  }
-}
-
-/* Ajustes para pantallas medianas */
-@media screen and (max-width: 768px) {
-  .responsive-table th, .responsive-table td {
-    font-size: 12px;
-    padding: 8px;
-  }
-  
-  .responsive-table th:nth-child(2), .responsive-table td:nth-child(2),
-  .responsive-table th:nth-child(4), .responsive-table td:nth-child(4),
-  .responsive-table th:nth-child(5), .responsive-table td:nth-child(5),
-  .responsive-table th:nth-child(6), .responsive-table td:nth-child(6),
-  .responsive-table th:nth-child(8), .responsive-table td:nth-child(8) {
-    display: none; /* Ocultar columnas menos importantes en pantallas medianas */
+    font-size: 10px;
+    padding: 7px;
   }
 }
 
 /* Ajustes para pantallas pequeñas (móviles) */
 @media screen and (max-width: 480px) {
   .responsive-table th, .responsive-table td {
-    font-size: 10px;
-    padding: 6px;
-  }
-
-  .responsive-table th:nth-child(3), .responsive-table td:nth-child(3),
-  .responsive-table th:nth-child(7), .responsive-table td:nth-child(7),
-  .responsive-table th:nth-child(9), .responsive-table td:nth-child(9),
-  .responsive-table th:nth-child(10), .responsive-table td:nth-child(10) {
-    display: none; /* Ocultar más columnas en pantallas pequeñas */
-  }
-  
-  .responsive-table th, .responsive-table td {
-    word-wrap: break-word;
+    font-size: 9px;
+    padding: 5px;
   }
 }
 
-/* Ajustes para pantallas extra pequeñas (menos de 400px) */
-@media screen and (max-width: 400px) {
-  .responsive-table th, .responsive-table td {
-    font-size: 9px;
-    padding: 4px;
+/* Ajustes para impresión */
+@media print {
+  @page {
+    size: letter landscape;
+    margin: 10mm;
   }
-
-  /* Ocultar más columnas para ajustarse a pantallas muy pequeñas */
-  .responsive-table th:nth-child(3), .responsive-table td:nth-child(3),
-  .responsive-table th:nth-child(7), .responsive-table td:nth-child(7),
-  .responsive-table th:nth-child(9), .responsive-table td:nth-child(9),
-  .responsive-table th:nth-child(10), .responsive-table td:nth-child(10),
-  .responsive-table th:nth-child(11), .responsive-table td:nth-child(11) {
-    display: none;
-  }
-  @media print {
 
   .table-container {
     overflow: visible;
@@ -250,26 +183,29 @@ function obtenerFechaActual() {
   }
 
   .responsive-table {
-    table-layout: fixed;
     width: 100%;
   }
 
-  .responsive-table th,
-  .responsive-table td {
-    font-size: 12px;
-    word-wrap: break-word;
-    padding: 5px;
+  .responsive-table th, .responsive-table td {
+    font-size: 9px;
+    padding: 4px;
   }
 
-  .responsive-table th:nth-child(4),
-  .responsive-table td:nth-child(4),
-  .responsive-table th:nth-child(5),
-  .responsive-table td:nth-child(5),
-  .responsive-table th:nth-child(6),
-  .responsive-table td:nth-child(6) {
-    display: none;
+  /* Asegurar que la tabla llene toda la hoja */
+  html, body {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Escalar el contenido para que encaje en la hoja */
+  body {
+    transform: scale(0.8);
+    transform-origin: 0 0;
+  }
+  
+  /* Evitar saltos de página innecesarios */
+  .responsive-table {
+    page-break-inside: avoid;
   }
 }
-}
-
 </style>
