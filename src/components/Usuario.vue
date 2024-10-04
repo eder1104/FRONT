@@ -194,6 +194,7 @@ const validar = async () => {
       await useUsuario.crearUsuario({
         nombre: inputNombreAdministrador.value.trim(),
         email: inputEmailAdministrador.value.trim(),
+        contrasena: inputContrasenaAdministrador.value.trim()
       });
     }
     await traer(); // Actualizar la tabla después de crear/editar
