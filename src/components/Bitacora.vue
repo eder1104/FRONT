@@ -9,9 +9,7 @@
           label="Crear Bitacora"
           class="crear colorCorporativo"
         />
-        <q-btn :disable="loading" class="crearPDF colorCorporativo" to="/Tabla">
-          <font-awesome-icon icon="file-invoice" style="color: #ffffff" />
-        </q-btn>
+
       </div>
       <br />
       <q-dialog v-model="prompt" persistent :style="{ zIndex: 1000 }">
