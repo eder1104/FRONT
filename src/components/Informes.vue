@@ -7,6 +7,7 @@
           v-model="fechaBuscada"
           label="Seleccionar fecha"
           type="date"
+          :rules="[val => !!val || 'Este campo es obligatorio']"
           :disable="loading"
         />
 
@@ -19,6 +20,7 @@
           :options="filteredFichas"
           @filter="filterFn"
           behavior="menu"
+          :rules="[val => !!val || 'Este campo es obligatorio']"
           emit-value
           map-options
           lazy-rules
@@ -107,6 +109,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'nombreFicha',
+    label: 'Ficha',
+    align: 'center',
+    field: row => row.nombreFicha || 'Sin Ficha',
+    sortable: true,
+  },
+  {
     name: 'codigoFicha',
     label: 'Código de Ficha',
     align: 'center',
@@ -134,6 +143,7 @@ async function traerFichas() {
   try {
     const inf = await useFicha.listarFichas();
     fichas.value = inf.data.map((ficha) => ({
+      nombre: ficha.nombre, // Mostrar el nombre como opción visible
       label: ficha.codigo, // Mostrar el código como opción visible
       value: ficha._id, // El valor interno es el ID
     }));
@@ -195,7 +205,10 @@ const buscarBitacoras = async () => {
 
     // Obtener el objeto de la ficha seleccionada
     const fichaSeleccionada = fichas.value.find(ficha => ficha.value === fichaBuscada.value);
+    console.log('djfisdjdsnidsnicdnicnsdicnsdincdisninv', fichas);
+    
     const codigoFichaSeleccionada = fichaSeleccionada ? fichaSeleccionada.label : 'Sin Ficha';
+    const nombreFichaSeleccionada = fichaSeleccionada ? fichaSeleccionada.nombre : 'Sin Ficha';
 
     const responseFicha = await useBitacora.listarPorFicha(fichaBuscada.value);
     if (!responseFicha.data || !responseFicha.data.bitacoras.length) {
@@ -211,12 +224,13 @@ const buscarBitacoras = async () => {
       bitacorasEncontradas.includes(bitacora._id)
     ).map((bitacora) => ({
       ...bitacora,
-      codigoFicha: codigoFichaSeleccionada // Añadir el código de la ficha seleccionada
+      codigoFicha: codigoFichaSeleccionada,
+      nombreFicha: nombreFichaSeleccionada
     }));
 
     // Asignar las bitácoras filtradas a rows
     rows.value = bitacorasFiltradas;
-
+    useBitacora.setBitacorasFiltradas(rows.value);
     if (rows.value.length === 0) {
       $q.notify({
         type: "warning",
@@ -224,7 +238,8 @@ const buscarBitacoras = async () => {
           "No se encontraron bitácoras para la ficha y la fecha seleccionadas.",
       });
     }
-    useBitacora.setBitacorasFiltradas(rows.value);
+
+    
 
   } catch (error) {
     console.error("Detalles del error:", error.response);

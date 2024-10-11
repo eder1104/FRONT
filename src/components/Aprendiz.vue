@@ -1,4 +1,5 @@
 <template>
+  <div class="">
   <router-view>
     <q-layout view="lHh Lpr lff">
       <q-page-container>
@@ -10,7 +11,7 @@
           :columns="columns"
           row-key="name"
           :loading="isLoading"
-          class="tabla"
+          class="tabla q-table--flat q-table--bordered"
           pagination.sync="pagination"
           :rows-per-page-options="[20, 50, 100, 0]"
         >
@@ -52,6 +53,7 @@
           </template>
         </q-table>
 
+
         <!-- Dialog for creating/editing Aprendiz -->
         <q-dialog v-model="prompt" persistent class="box">
           <q-card style="min-width: 350px">
@@ -72,6 +74,7 @@
                 :disable="isLoading"
                 autofocus
                 @keyup.enter="guardar()"
+                :rules="[val => !!val || 'Este campo es obligatorio']"
               >
                 <template v-slot:prepend>
                   <font-awesome-icon icon="spell-check" />
@@ -86,6 +89,8 @@
                 v-model="inputDocumentoAprendiz"
                 :disable="isLoading"
                 @keyup.enter="guardar()"
+                :rules="[val => !!val || 'Este campo es obligatorio']"
+
                 >
                 <template v-slot:prepend>
                   <font-awesome-icon icon="address-card" />                
@@ -100,6 +105,7 @@
                 required
                 :disable="isLoading"
                 @keyup.enter="guardar()"
+                :rules="[val => !!val || 'Este campo es obligatorio']"
                 >
                 <template v-slot:prepend>
                   <font-awesome-icon icon="phone" />                
@@ -113,6 +119,7 @@
                 v-model="inputEmailAprendiz"
                 required
                 :disable="isLoading"
+                :rules="[val => !!val || 'Este campo es obligatorio']"
                 @keyup.enter="guardar()"
                 >
                 <template v-slot:prepend>
@@ -123,6 +130,7 @@
               <q-file
                 filled
                 label="Firma del Aprendiz"
+                :rules="[val => !!val || 'Este campo es obligatorio']"
                 v-model="firma"
                 name="firma"
                 required 
@@ -137,6 +145,7 @@
               <q-select
                 filled
                 v-model="selectedFicha"
+                :rules="[val => !!val || 'Este campo es obligatorio']"
                 :options="fichas"
                 :disable="isLoading"
                 option-label="codigo"
@@ -173,7 +182,7 @@
           </q-card>
         </q-dialog>
       </q-page-container> </q-layout
-  ></router-view>
+  ></router-view></div>
 </template>
 
 <script setup>
@@ -211,6 +220,20 @@ const columns = ref([
     field: "documento",
     sortable: true,
   },
+  {
+    name: 'nombreFicha',
+    label: 'Ficha',
+    align: 'center',
+    field: 'nombreFicha',
+    sortable: true,
+  },
+  // {
+  //   name: 'codigoFicha',
+  //   label: 'Código de Ficha',
+  //   align: 'center',
+  //   field: 'codigoFicha',
+  //   sortable: true,
+  // },
   {
     name: "telefono1",
     align: "center",
@@ -287,11 +310,21 @@ function abrirDialogo(row = null) {
 async function traerFichas() {
   isLoading.value = true;
   try {
-    const inf = await useFicha.listarFichas();
-    fichas.value = inf.data.map((ficha) => ({
-      id: ficha._id,
-      codigo: `${ficha.codigo} - ${ficha.nombre}`,
-    }));
+    const fichasResponse = await useFicha.listarFichas();
+    const aprendicesResponse = await useAprendiz.listarAprendiz();
+
+    rows.value = aprendicesResponse.data.map((aprendiz) => {
+      const ficha = fichasResponse.data.find(
+        (ficha) => ficha._id === aprendiz.id_ficha
+      );
+
+      return {
+        ...aprendiz,
+        nombreFicha: ficha?.nombre || 'Sin Ficha',
+        codigoFicha: ficha?.codigo || 'Sin Código',
+      };
+    });
+
   } catch (error) {
     $q.notify({
       type: "negative",
@@ -301,7 +334,7 @@ async function traerFichas() {
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 async function guardar() {
   isLoading.value = true;
@@ -332,6 +365,11 @@ async function guardar() {
   formData.append("firma", firma.value);
 
   try {
+    console.log('documento:', inputDocumentoAprendiz.value);
+    console.log('nombre:', inputNombreAprendiz.value);
+    console.log('teléfono:', inputTelefonoAprendiz.value);
+    console.log('email:', inputEmailAprendiz.value);
+    console.log('ficha ID:', fichaId);
     if (editando.value) {
       const respuesta = await useAprendiz.actualizarAprendiz(aprendizId.value, formData);
       if (respuesta.success) {
@@ -339,6 +377,7 @@ async function guardar() {
           type: "positive",
           message: "Aprendiz actualizado correctamente.",
         });
+        await traer()
       } else {
         $q.notify({
           type: "negative",
@@ -412,6 +451,11 @@ async function desactivar(id) {
 </script>
 
 <style scooped>
+.table {
+  width: 100%;
+  overflow-x: auto; /* Permite desplazamiento horizontal en pantallas pequeñas */
+}
+
 .width {
   width: 3%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -429,6 +473,74 @@ async function desactivar(id) {
 .q-card__section{
   padding: 0px !important;
 
+}
+
+/* Media queries para hacer el diseño responsivo */
+/* Estilo para la tabla en pantallas pequeñas */
+@media (max-width: 600px) {
+  .tabla .q-table__title {
+    font-size: 14px;
+  }
+
+  .tabla thead th {
+    font-size: 12px;
+    padding: 8px; /* Reduce el padding para ahorrar espacio */
+  }
+
+  .tabla tbody td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  /* Ajuste para que las opciones de botones se muestren más compactas */
+  .tabla .q-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+/* Estilo para la tabla en pantallas medianas (tabletas) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .tabla .q-table__title {
+    font-size: 16px;
+  }
+
+  .tabla thead th {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .tabla tbody td {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .tabla .q-btn {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+/* Estilo para pantallas grandes (escritorio) */
+@media (min-width: 1025px) {
+  .tabla .q-table__title {
+    font-size: 18px;
+  }
+
+  .tabla thead th {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .tabla tbody td {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .tabla .q-btn {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
 }
 
 </style>

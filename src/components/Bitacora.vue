@@ -26,6 +26,7 @@
             use-input
             option-label="documento"
             option-value="_id"
+            :rules="[val => !!val || 'Este campo es obligatorio']"
             label="Seleccionar Aprendiz"
             autofocus
             :disable="loading"
@@ -41,6 +42,7 @@
             filled
             v-model="fecha"
             label="Seleccionar fecha"
+            :rules="[val => !!val || 'Este campo es obligatorio']"
             type="date"
             :disable="loading"
           >
@@ -144,13 +146,23 @@ const loading = ref(false);
 const selectedAprendiz = ref(null);
 const fecha = ref(null);
 const aprendices = ref([]);
+const fichas = ref([]);
 const dialogTitle = ref("");
 const q$ = useQuasar();
 const estados = ref(["Asistió", "No Asistió", "Pendiente", "Excusa"]);
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
+const useFicha = useFichaStore();
 const rows = ref([]);
 const columns = ref([
+{
+    name: "nombre",
+    required: true,
+    label: "Nombre del Aprendiz",
+    align: "center",
+    field: "nombre",
+    sortable: true,
+  },
   {
     name: "cedulaAprendiz",
     required: true,
@@ -160,11 +172,17 @@ const columns = ref([
     sortable: true,
   },
   {
-    name: "nombre",
-    required: true,
-    label: "Nombre del Aprendiz",
-    align: "center",
-    field: "nombre",
+    name: 'nombreFicha',
+    label: 'Ficha',
+    align: 'center',
+    field: 'nombreFicha',
+    sortable: true,
+  },
+  {
+    name: 'codigoFicha',
+    label: 'Código de Ficha',
+    align: 'center',
+    field: 'codigoFicha',
     sortable: true,
   },
   {
@@ -187,22 +205,30 @@ async function traer() {
   try {
     let response = await useBitacora.listarTodo();
     let response2 = await useAprendiz.listarAprendiz();
+    let response3 = await useFicha.listarFichas();
 
     rows.value = response.data.bitacoras.map((bitacora) => {
       let aprendiz = response2.data.find(
         (aprendiz) => aprendiz?._id === bitacora?.id_aprendiz
       );
+      let ficha = response3.data.find(
+        (ficha) => ficha?._id === aprendiz?.id_ficha
+      );
+
       return {
         ...bitacora,
         cedulaAprendiz: aprendiz?.documento || "No disponible",
         nombre: aprendiz?.nombre || "Desconocido",
         fecha: formatFecha(bitacora?.fecha || new Date()),
+        nombreFicha: ficha?.nombre || "Sin Ficha",
+        codigoFicha: ficha?.codigo || "Sin Código",
       };
     });
   } finally {
     loading.value = false;
   }
 }
+
 
 function obtenerFechaActual() {
   const fecha = new Date();
@@ -255,8 +281,12 @@ const cambiarEstado = async (id, estado) => {
 };
 
 function formatFecha(fecha) {
+  const date = new Date(fecha);
+  const offset = date.getTimezoneOffset();
+  date.setMinutes(date.getMinutes() + offset);
+  
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-  return new Date(fecha).toLocaleDateString("es-ES", options);
+  return date.toLocaleDateString("es-ES", options);
 }
 
 const dialogo = (accion, bitacora = null) => {

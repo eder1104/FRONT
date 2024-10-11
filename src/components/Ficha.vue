@@ -70,6 +70,7 @@
               @keydown="preventNonNumeric"
               @input="formatInputCodigoFicha"
               @keyup.enter="prompt = false"
+              :rules="[val => !!val || 'Este campo es obligatorio']"
             >
               <template v-slot:prepend>
                 <font-awesome-icon icon="hashtag" />
@@ -83,6 +84,7 @@
               :disable="loadingGeneral"
               v-model="inputNombreFicha"
               autofocus
+              :rules="[val => !!val || 'Este campo es obligatorio']"
               @keyup.enter="prompt = false"
             >
               <template v-slot:prepend>

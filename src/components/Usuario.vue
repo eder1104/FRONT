@@ -69,6 +69,7 @@
                 v-model="inputNombreAdministrador"
                 :disable="isLoading"
                 autofocus 
+                :rules="[val => !!val || 'Este campo es obligatorio']"
                 >
                 <template v-slot:prepend>
                   <font-awesome-icon icon="spell-check" />
@@ -81,6 +82,7 @@
                 label-class="custom-label" 
                 v-model="inputEmailAdministrador"
                 :disable="isLoading" 
+                :rules="[val => !!val || 'Este campo es obligatorio']"
                 >
                 <template v-slot:prepend>
                   <font-awesome-icon icon="envelope" />                
@@ -95,8 +97,8 @@
             v-model="inputContrasenaAdministrador"
             label="Ingrese su contraseña"
             lazy-rules
+            :rules="[val => !!val || 'Este campo es obligatorio']"
             @paste.prevent
-            :rules="[(val) => !!val || 'La contraseña es requerida']"
           >
           <template v-slot:prepend>
                   <font-awesome-icon icon="lock" />                

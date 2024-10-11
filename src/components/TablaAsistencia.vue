@@ -47,7 +47,7 @@
 
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import { useBitacoraStore } from "../stores/bitacora";
+import { useBitacoraStore } from "../stores/bitacora.js";
 
 let day = ref("_");
 let numberMonth = ref("_");
@@ -94,9 +94,16 @@ function traerBitacorasFiltradas() {
 function fillRemainingRows() {
   displayedRows.value = rows.value.length >= 27 ? rows.value : rows.value.concat(
     Array(27 - rows.value.length).fill({
-      nombre: '', cedula: '', planta: '', contratista: '',
-      otro: '', dependencia: '', correo: '', telefono: '',
-      autorizaGrabacion: '', firma: ''
+      nombre: '', 
+      cedula: '', 
+      planta: '', 
+      contratista: '',
+      otro: '', 
+      dependencia: '', 
+      correo: '', 
+      telefono: '',
+      autorizaGrabacion: '', 
+      firma: ''
     })
   );
 }

@@ -45,7 +45,7 @@
 
           <q-img
             class="absolute-top"
-            src="../assets/Images/fondo_q-drawer.avif"
+            src="../assets/Images/qDrawerImage.jpg"
             style="height: 150px"
           >
             <div class="absolute-bottom bg-transparent">
