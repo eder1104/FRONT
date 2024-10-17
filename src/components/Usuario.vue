@@ -175,14 +175,34 @@ async function traer() {
     }
   }
 
-const validar = async () => {
+  const validar = async () => {
   isLoading.value = true;
 
-  if (!inputNombreAdministrador.value || !inputEmailAdministrador.value) {
+  // Validar campos vacíos en orden
+  if (!inputNombreAdministrador.value.trim()) {
     q$.notify({
       type: "negative",
-      message: "Rellena todos los campos.",
+      message: "El nombre del administrador es obligatorio.",
     });
+    isLoading.value = false; // Cancelar la carga si hay errores
+    return;
+  }
+
+  if (!inputEmailAdministrador.value.trim()) {
+    q$.notify({
+      type: "negative",
+      message: "El email del administrador es obligatorio.",
+    });
+    isLoading.value = false; // Cancelar la carga si hay errores
+    return;
+  }
+
+  if (!editando.value && !inputContrasenaAdministrador.value.trim()) {
+    q$.notify({
+      type: "negative",
+      message: "La contraseña es obligatoria.",
+    });
+    isLoading.value = false; // Cancelar la carga si hay errores
     return;
   }
 
@@ -196,7 +216,7 @@ const validar = async () => {
       await useUsuario.crearUsuario({
         nombre: inputNombreAdministrador.value.trim(),
         email: inputEmailAdministrador.value.trim(),
-        contrasena: inputContrasenaAdministrador.value.trim()
+        contrasena: inputContrasenaAdministrador.value.trim(),
       });
     }
     await traer(); // Actualizar la tabla después de crear/editar
@@ -204,9 +224,11 @@ const validar = async () => {
   } catch (error) {
     console.log(error);
   } finally {
-      isLoading.value = false;
-    }
+    isLoading.value = false; // Detener la carga al finalizar
+  }
 };
+
+
 
 async function activar(id) {
     loadingButtons.value[id] = { ...loadingButtons.value[id], activar: true };

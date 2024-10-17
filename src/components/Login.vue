@@ -88,9 +88,9 @@
         </div>
       </q-form>
     </div>
-  </div>
-  <div>
-    <div class="todr">REPFORA - Sena 2024 © Todos los derechos reservados</div>
+    <div>
+      <div class="todr">REPFORA - Sena 2024 © Todos los derechos reservados</div>
+    </div>
   </div>
 </template>
 

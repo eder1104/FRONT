@@ -4,11 +4,6 @@
       <q-header elevated class="bg-green text-white">
         <q-toolbar>
           <q-toolbar-title>REPFORA</q-toolbar-title>
-          <img
-            src="../assets/Images/Logo-Back-Home.png"
-            to="/"
-            class="width"
-          />
         </q-toolbar>
       </q-header>
       <br><br>

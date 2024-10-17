@@ -4,7 +4,8 @@
       <table class="responsive-table">
         <thead>
           <tr>
-            <th colspan="11">REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No- {{ actaNumber }} DEL DÍA {{ day }} DEL MES DE {{ nameMonth }} DEL AÑO {{ year }}</th>
+            <th colspan="11">REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No- {{ actaNumber }} DEL DÍA {{ day }} DEL MES
+              DE {{ nameMonth }} DEL AÑO {{ year }}</th>
           </tr>
           <tr>
             <th colspan="2">OBJETIVO (S)</th>
@@ -37,7 +38,9 @@
             <td>{{ row.correo }}</td>
             <td>{{ row.telefono }}</td>
             <td>{{ row.autorizaGrabacion }}</td>
-            <td id="imagenFirma"><img :src="row.firma" alt="Firma" class="firma-imagen" /></td>
+            <td id="imagenFirma">
+              <img :src="row.firma" alt="" class="firma-imagen"  v-if="row.firma"/>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -94,15 +97,15 @@ function traerBitacorasFiltradas() {
 function fillRemainingRows() {
   displayedRows.value = rows.value.length >= 27 ? rows.value : rows.value.concat(
     Array(27 - rows.value.length).fill({
-      nombre: '', 
-      cedula: '', 
-      planta: '', 
+      nombre: '',
+      cedula: '',
+      planta: '',
       contratista: '',
-      otro: '', 
-      dependencia: '', 
-      correo: '', 
+      otro: '',
+      dependencia: '',
+      correo: '',
       telefono: '',
-      autorizaGrabacion: '', 
+      autorizaGrabacion: '',
       firma: ''
     })
   );
@@ -131,7 +134,8 @@ function obtenerFechaActual() {
   word-wrap: break-word;
 }
 
-.responsive-table th, .responsive-table td {
+.responsive-table th,
+.responsive-table td {
   border: 1px solid #000000;
   text-align: center;
   font-size: 12px;
@@ -162,7 +166,9 @@ function obtenerFechaActual() {
 
 /* Ajustes para tablets */
 @media screen and (max-width: 1024px) {
-  .responsive-table th, .responsive-table td {
+
+  .responsive-table th,
+  .responsive-table td {
     font-size: 10px;
     padding: 7px;
   }
@@ -170,7 +176,9 @@ function obtenerFechaActual() {
 
 /* Ajustes para pantallas pequeñas (móviles) */
 @media screen and (max-width: 480px) {
-  .responsive-table th, .responsive-table td {
+
+  .responsive-table th,
+  .responsive-table td {
     font-size: 9px;
     padding: 5px;
   }
@@ -193,23 +201,25 @@ function obtenerFechaActual() {
     width: 100%;
   }
 
-  .responsive-table th, .responsive-table td {
+  .responsive-table th,
+  .responsive-table td {
     font-size: 9px;
     padding: 4px;
   }
 
   /* Asegurar que la tabla llene toda la hoja */
-  html, body {
+  html,
+  body {
     width: 100%;
     height: 100%;
   }
-  
+
   /* Escalar el contenido para que encaje en la hoja */
   body {
     transform: scale(0.8);
     transform-origin: 0 0;
   }
-  
+
   /* Evitar saltos de página innecesarios */
   .responsive-table {
     page-break-inside: avoid;
